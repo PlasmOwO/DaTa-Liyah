@@ -54,10 +54,10 @@ filenames.forEach((file) => {
             console.error(`Erreur lors de la conversion du fichier ${file} :`, error.message);
         }
 
-        // fs.unlink(roflFile , (err) => {
-        //     if (err) console.error(`Erreur lors de la suppression du fichier ${file} :`, err.message);
-        //     else console.log(`Fichier supprimé : ${file}`);
-        // });
+        fs.unlink(roflFile , (err) => {
+            if (err) console.error(`Erreur lors de la suppression du fichier ${file} :`, err.message);
+            else console.log(`Fichier supprimé : ${file}`);
+        });
 
     } else {
         console.log(`Fichier ignoré (non-ROFL) : ${file}`);
