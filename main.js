@@ -27,7 +27,7 @@ function updateJsonKeys(metadata, filename) {
         metadata.participants = metadata.statsJson;
         delete metadata.statsJson;
     }
-    
+
     return metadata;
 }
 
