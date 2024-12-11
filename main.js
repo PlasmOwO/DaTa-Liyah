@@ -13,29 +13,46 @@ if (!fs.existsSync(targetFolder)) {
     fs.mkdirSync(targetFolder, { recursive: true });
 }
 
-// Chemin complet du fichier .rofl
-let filenames = fs.readdirSync(sourceFolder)
-console.log("\nFilenames in directory : " )
+// Fonction pour mettre à jour les noms de clés
+function updateJsonKeys(metadata) {
+    if (metadata.hasOwnProperty('gameLength')) {
+        metadata.gameDuration = metadata.gameLength;
+        delete metadata.gameLength;
+    }
+
+    if (metadata.hasOwnProperty('statsJson')) {
+        metadata.participants = metadata.statsJson;
+        delete metadata.statsJson;
+    }
+    
+    return metadata;
+}
+
+// Parcourir les fichiers dans le dossier source
+let filenames = fs.readdirSync(sourceFolder);
+console.log("\nFichiers dans le dossier :");
 filenames.forEach((file) => {
-    // console.log(file);
-    if(file.endsWith('.rofl')){
+    if (file.endsWith('.rofl')) {
         const roflFile = path.join(sourceFolder, file);
         const jsonFile = path.join(targetFolder, `${path.basename(file, '.rofl')}.json`);
-       
+
         try {
-            // Lecture du fichier.rofl
+            // Lecture du fichier .rofl
             const reader = new ROFLReader(roflFile);
             const metadata = reader.getMetadata();
-            fs.writeFileSync(jsonFile, JSON.stringify(metadata, null, 2), 'utf8');
+
+            // Mise à jour des clés JSON
+            const updatedMetadata = updateJsonKeys(metadata);
+
+            // Écriture dans le fichier cible
+            fs.writeFileSync(jsonFile, JSON.stringify(updatedMetadata, null, 2), 'utf8');
             console.log(`Conversion réussie : ${file} -> ${jsonFile}`);
-        }
-        catch (error){
+        } catch (error) {
             console.error(`Erreur lors de la conversion du fichier ${file} :`, error.message);
         }
-    }
-    else {
+    } else {
         console.log(`Fichier ignoré (non-ROFL) : ${file}`);
     }
 });
 
-console.log(`Les métadonnées ont été converties et sauvegardées dans : ${jsonFile}`);
+console.log(`Les métadonnées ont été converties et sauvegardées dans : ${targetFolder}`);
