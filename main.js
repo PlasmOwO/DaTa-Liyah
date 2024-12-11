@@ -14,7 +14,9 @@ if (!fs.existsSync(targetFolder)) {
 }
 
 // Fonction pour mettre à jour les noms de clés
-function updateJsonKeys(metadata) {
+function updateJsonKeys(metadata, filename) {
+    // add du file name en première ligne
+    metadata.jsonFileName = filename
     // changement du nom gameLength en gameDuration
     if (metadata.hasOwnProperty('gameLength')) {
         metadata.gameDuration = metadata.gameLength;
@@ -43,7 +45,7 @@ filenames.forEach((file) => {
             const metadata = reader.getMetadata();
 
             // Mise à jour des clés JSON
-            const updatedMetadata = updateJsonKeys(metadata);
+            const updatedMetadata = updateJsonKeys(metadata, file.slice(0, -5));
 
             // Écriture dans le fichier cible
             fs.writeFileSync(jsonFile, JSON.stringify(updatedMetadata, null, 2), 'utf8');
@@ -52,10 +54,10 @@ filenames.forEach((file) => {
             console.error(`Erreur lors de la conversion du fichier ${file} :`, error.message);
         }
 
-        fs.unlink(roflFile , (err) => {
-            if (err) console.error(`Erreur lors de la suppression du fichier ${file} :`, err.message);
-            else console.log(`Fichier supprimé : ${file}`);
-        });
+        // fs.unlink(roflFile , (err) => {
+        //     if (err) console.error(`Erreur lors de la suppression du fichier ${file} :`, err.message);
+        //     else console.log(`Fichier supprimé : ${file}`);
+        // });
 
     } else {
         console.log(`Fichier ignoré (non-ROFL) : ${file}`);
