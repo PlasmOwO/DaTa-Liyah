@@ -5,8 +5,8 @@ const fs = require('fs');
 const path = require('path');
 
 // Dossier source et cible
-const sourceFolder = '../file_need_conversion_to_json';
-const targetFolder = '../file_converted_to_json';
+const sourceFolder = './file_need_conversion_to_json_copy';
+const targetFolder = './file_converted_to_json_copy';
 
 // Vérifier si le dossier cible existe, sinon le créer
 if (!fs.existsSync(targetFolder)) {
@@ -51,6 +51,12 @@ filenames.forEach((file) => {
         } catch (error) {
             console.error(`Erreur lors de la conversion du fichier ${file} :`, error.message);
         }
+
+        fs.unlink(roflFile , (err) => {
+            if (err) console.error(`Erreur lors de la suppression du fichier ${file} :`, err.message);
+            else console.log(`Fichier supprimé : ${file}`);
+        });
+
     } else {
         console.log(`Fichier ignoré (non-ROFL) : ${file}`);
     }
