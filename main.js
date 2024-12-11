@@ -15,11 +15,12 @@ if (!fs.existsSync(targetFolder)) {
 
 // Fonction pour mettre à jour les noms de clés
 function updateJsonKeys(metadata) {
+    // changement du nom gameLength en gameDuration
     if (metadata.hasOwnProperty('gameLength')) {
         metadata.gameDuration = metadata.gameLength;
         delete metadata.gameLength;
     }
-
+    // changement du nom statsJson en participants
     if (metadata.hasOwnProperty('statsJson')) {
         metadata.participants = metadata.statsJson;
         delete metadata.statsJson;
