@@ -1,16 +1,19 @@
 // npm install rofl-parser.js
+// npm install express mongodb fs
 
 const { ROFLReader } = require('rofl-parser.js');
 const fs = require('fs');
 const path = require('path');
 
 // Dossier source et cible
-const sourceFolder = './file_need_conversion_to_json_copy';
-const targetFolder = './file_converted_to_json_copy';
+const sourceFolderRofl = './file_need_conversion_to_json';
+const targetFolderJson = './file_converted_to_json';
+
+
 
 // Vérifier si le dossier cible existe, sinon le créer
-if (!fs.existsSync(targetFolder)) {
-    fs.mkdirSync(targetFolder, { recursive: true });
+if (!fs.existsSync(targetFolderJson)) {
+    fs.mkdirSync(targetFolderJson, { recursive: true });
 }
 
 // Fonction pour mettre à jour les noms de clés
@@ -32,12 +35,12 @@ function updateJsonKeys(metadata, filename) {
 }
 
 // Parcourir les fichiers dans le dossier source
-let filenames = fs.readdirSync(sourceFolder);
+let filenames = fs.readdirSync(sourceFolderRofl);
 console.log("\nFichiers dans le dossier :");
 filenames.forEach((file) => {
     if (file.endsWith('.rofl')) {
-        const roflFile = path.join(sourceFolder, file);
-        const jsonFile = path.join(targetFolder, `${path.basename(file, '.rofl')}.json`);
+        const roflFile = path.join(sourceFolderRofl, file);
+        const jsonFile = path.join(targetFolderJson, `${path.basename(file, '.rofl')}.json`);
 
         try {
             // Lecture du fichier .rofl
@@ -54,14 +57,30 @@ filenames.forEach((file) => {
             console.error(`Erreur lors de la conversion du fichier ${file} :`, error.message);
         }
 
-        fs.unlink(roflFile , (err) => {
-            if (err) console.error(`Erreur lors de la suppression du fichier ${file} :`, err.message);
-            else console.log(`Fichier supprimé : ${file}`);
-        });
+        // fs.unlink(roflFile , (err) => {
+        //     if (err) console.error(`Erreur lors de la suppression du fichier ${file} :`, err.message);
+        //     else console.log(`Fichier supprimé : ${file}`);
+        // });
 
     } else {
         console.log(`Fichier ignoré (non-ROFL) : ${file}`);
     }
 });
 
-console.log(`Les métadonnées ont été converties et sauvegardées dans : ${targetFolder}`);
+console.log(`Les métadonnées ont été converties et sauvegardées dans : ${targetFolderJson}`);
+
+const { exec } = require('child_process');
+
+exec('python push_json_to_db.py', (error, stdout, stderr) => {
+    if (error) {
+        console.error(`Error executing script: ${error.message}`);
+        return;
+    }
+
+    if (stderr) {
+        console.error(`Error in script: ${stderr}`);
+        return;
+    }
+
+    console.log(`Output:\n${stdout}`);
+});
