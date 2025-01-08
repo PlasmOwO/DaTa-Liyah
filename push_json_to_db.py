@@ -1,10 +1,12 @@
 import pymongo
 import json
 import os  # Import os to work with directories
+from dotenv import load_dotenv
+load_dotenv()
 
-sourceJsonFolder = "./file_converted_to_json"
+sourceJsonFolder = "./json_folder"
 
-myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+myclient = pymongo.MongoClient(host=os.getenv("ATLAS_CONNEXION_STRING"))
 db = myclient["lol_match_database"]
 collection = db["scrim_matches"]
 
@@ -13,7 +15,7 @@ try:
         file_path = os.path.join(sourceJsonFolder, file_name)
         
         if os.path.isfile(file_path) and file_name.endswith('.json'):
-            with open(file_path, 'r') as f:
+            with open(file_path, 'rb') as f:
                 file_data = json.load(f)
 
             if isinstance(file_data, dict):

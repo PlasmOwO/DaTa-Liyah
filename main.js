@@ -6,8 +6,8 @@ const fs = require('fs');
 const path = require('path');
 
 // Dossier source et cible
-const sourceFolderRofl = './file_need_conversion_to_json';
-const targetFolderJson = './file_converted_to_json';
+const sourceFolderRofl = './rofl_folder';
+const targetFolderJson = './json_folder';
 
 
 
