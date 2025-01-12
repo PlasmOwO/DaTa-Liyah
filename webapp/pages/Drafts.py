@@ -34,12 +34,3 @@ for game in draft_collection.find() :
         df = pd.concat([df,pd.json_normalize(game)])
 
 st.write(df)
-
-a = []
-for game_bans in df['blue.bans'] :
-        a = a + game_bans
-
-test = pd.DataFrame.from_dict(Counter(a), orient='index').reset_index()
-bar_blue_bans = plty.bar(test, x="index",y=0)
-st.plotly_chart(bar_blue_bans)
-st.write(test)
