@@ -30,6 +30,11 @@ function updateJsonKeys(metadata, filename) {
         metadata.participants = metadata.statsJson;
         delete metadata.statsJson;
     }
+    // association d'un role sans prendre en compte le lane swap
+    const positions = ["TOP", "JUNGLE", "MIDDLE", "BOTTOM", "UTILITY"];
+    metadata.participants.forEach((participant, index) => {
+        participant.TRUE_POSITION = positions[index % 5];
+    });
 
     return metadata;
 }
