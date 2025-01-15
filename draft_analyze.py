@@ -7,7 +7,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.11.2
 #   kernelspec:
-#     display_name: Python 3
+#     display_name: lol_venv
 #     language: python
 #     name: python3
 # ---
@@ -119,6 +119,26 @@ def count_champs_bans(data : pd.DataFrame, chart : bool = False) :
     return champions_bans_df
 
 
+# %%
+# load_dotenv()
+# connect = connect_database('lol_match_database', host=os.getenv("ATLAS_CONNEXION_STRING"))
+# drafts = get_collection(connect,"drafts")
+# df = read_and_create_dataframe(drafts)
+
+# %%
+# Merge function
+def merge_scrim_with_draft(df_scrim : pd.DataFrame, df_draft : pd.DataFrame) -> pd.DataFrame :
+    """Merge scrim data with draft data based on the date of the match (i.e : 03022025_2)
+
+    Args:
+        df_scrim (pd.DataFrame): DataFrame contaning the scrim data (json from rofl)
+        df_draft (pd.DataFrame): DataFrame containing the draft data from scraping.
+
+    Returns:
+        pd.DataFrame: The merged DataFrame (left merge)
+    """
+    df_draft['date'] = df_draft['date'].apply(lambda x : x.replace(" ",""))
+    return df_scrim.merge(df_draft, how='left', left_on="jsonFileName",right_on="date")
 # %%
 # count_champs_bans(df,chart=True)
 

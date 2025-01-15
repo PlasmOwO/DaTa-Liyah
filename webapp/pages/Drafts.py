@@ -3,6 +3,7 @@ import sys
 import os
 sys.path.append("../")
 import draft_analyze
+import json_scrim
 from dotenv import load_dotenv
 import streamlit as st
 import pandas as pd
@@ -18,19 +19,20 @@ load_dotenv()
 ## Draft analyze
 connect = draft_analyze.connect_database('lol_match_database', host=os.getenv("ATLAS_CONNEXION_STRING"))
 drafts = draft_analyze.get_collection(connect,"drafts")
-draft_df = draft_analyze.read_and_create_dataframe(drafts)
+drafts_df = draft_analyze.read_and_create_dataframe(drafts)
+scrims = json_scrim.get_collection(connect, "scrim_matches")
+scrims_df = json_scrim.read_and_create_dataframe(scrims)
 
-figure_bans= draft_analyze.count_champs_bans(draft_df,chart=True)
+merged_data = draft_analyze.merge_scrim_with_draft(scrims_df,drafts_df)
 
 
-
+## Bans chart
+figure_bans= draft_analyze.count_champs_bans(drafts_df,chart=True)
 st.plotly_chart(figure_bans,theme=None)
 
-client=MongoClient(host=os.getenv("ATLAS_CONNEXION_STRING"))
-db = client["lol_match_database"]
-draft_collection = db["drafts"]
-df = pd.DataFrame()
-for game in draft_collection.find() :
-        df = pd.concat([df,pd.json_normalize(game)])
 
-st.write(df)
+
+## DataFrame
+st.dataframe(drafts_df)
+
+st.dataframe(merged_data)
