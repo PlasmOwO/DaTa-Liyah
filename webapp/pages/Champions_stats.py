@@ -34,6 +34,8 @@ data_scrim_matches = json_scrim.read_and_create_dataframe(scrim_matches)
 scl_games = json_scrim.filter_data_on_team(data_scrim_matches, team_dict=team_scald_dico)
 
 # %%
+#app config
+st.set_page_config(layout="wide")
 #Winrate table
 columns = st.columns(5)
 
@@ -42,13 +44,13 @@ role_title = ["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"]
 for role in range (0,5):
     with columns[role]:
         st.subheader(role_title[role])
-        st.dataframe(winrate_table_scl[role])
+        st.dataframe(winrate_table_scl[role], use_container_width=True)
 
 # %%
 #Winrate duomatch
 st.write("Duo winrate ADC/SUP")
 botlane_winrate = json_scrim.calculate_duo_winrate(scl_games,roles=["BOTTOM","UTILITY"])
-st.dataframe(botlane_winrate)
+st.dataframe(botlane_winrate, use_container_width=True)
 
 # %%
 
