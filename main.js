@@ -1,40 +1,54 @@
-// npm install rofl-parser.js
-// npm install express mongodb fs
-
 const { ROFLReader } = require('rofl-parser.js');
 const fs = require('fs');
 const path = require('path');
 
 // Dossier source et cible
-const sourceFolderRofl = './rofl_folder';
-const targetFolderJson = './json_folder';
-
-
+const sourceFolderRofl = './file_need_conversion_to_json';
+const targetFolderJson = './file_converted_to_json';
 
 // Vérifier si le dossier cible existe, sinon le créer
 if (!fs.existsSync(targetFolderJson)) {
     fs.mkdirSync(targetFolderJson, { recursive: true });
 }
 
+// Fonction pour extraire le patch
+// Fonction pour extraire le patch (format attendu : 15.0.1 ou 15.1)
+function getPatch(roflPath) {
+    try {
+        // Lecture des premiers 300 octets du fichier (plage plus large pour trouver le patch)
+        const buffer = fs.readFileSync(roflPath);
+        const hexString = buffer.toString('hex');
+        const utf8String = Buffer.from(hexString, 'hex').toString('ascii').replace(/\0/g, '');
+
+        // Recherche de la version du patch (e.g., "15.0.1" ou "15.1")
+        const matches = utf8String.match(/\d{1,2}\.\d{1,2}(\.\d{1,2})?/);
+        if (matches && matches.length > 0) {
+            return matches[0]; // Retourne le premier match trouvé
+        } else {
+            console.error(`Aucun patch trouvé pour le fichier : ${roflPath}`);
+            return null;
+        }
+    } catch (error) {
+        console.error(`Erreur lors de l'extraction du patch : ${error.message}`);
+        return null;
+    }
+}
+
 // Fonction pour mettre à jour les noms de clés
-function updateJsonKeys(metadata, filename) {
-    // add du file name en première ligne
-    metadata.jsonFileName = filename
-    // changement du nom gameLength en gameDuration
+function updateJsonKeys(metadata, filename, patch) {
+    // Ajouter le nom du fichier et le patch dans les métadonnées
+    metadata.jsonFileName = filename;
+    if (patch) metadata.patchVersion = patch;
+
+    // Changer le nom des clés
     if (metadata.hasOwnProperty('gameLength')) {
         metadata.gameDuration = metadata.gameLength;
         delete metadata.gameLength;
     }
-    // changement du nom statsJson en participants
     if (metadata.hasOwnProperty('statsJson')) {
         metadata.participants = metadata.statsJson;
         delete metadata.statsJson;
     }
-    // association d'un role sans prendre en compte le lane swap
-    const positions = ["TOP", "JUNGLE", "MIDDLE", "BOTTOM", "UTILITY"];
-    metadata.participants.forEach((participant, index) => {
-        participant.TRUE_POSITION = positions[index % 5];
-    });
 
     return metadata;
 }
@@ -48,12 +62,15 @@ filenames.forEach((file) => {
         const jsonFile = path.join(targetFolderJson, `${path.basename(file, '.rofl')}.json`);
 
         try {
+            // Extraire le patch
+            const patch = getPatch(roflFile);
+
             // Lecture du fichier .rofl
             const reader = new ROFLReader(roflFile);
             const metadata = reader.getMetadata();
 
             // Mise à jour des clés JSON
-            const updatedMetadata = updateJsonKeys(metadata, file.slice(0, -5));
+            const updatedMetadata = updateJsonKeys(metadata, file.slice(0, -5), patch);
 
             // Écriture dans le fichier cible
             fs.writeFileSync(jsonFile, JSON.stringify(updatedMetadata, null, 2), 'utf8');
@@ -66,7 +83,6 @@ filenames.forEach((file) => {
         //     if (err) console.error(`Erreur lors de la suppression du fichier ${file} :`, err.message);
         //     else console.log(`Fichier supprimé : ${file}`);
         // });
-
     } else {
         console.log(`Fichier ignoré (non-ROFL) : ${file}`);
     }
