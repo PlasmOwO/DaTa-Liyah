@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 // Dossier source et cible
-const sourceFolderRofl = './file_need_conversion_to_json';
-const targetFolderJson = './file_converted_to_json';
+const sourceFolderRofl = './rofl_folder';
+const targetFolderJson = './json_folder';
 
 // Vérifier si le dossier cible existe, sinon le créer
 if (!fs.existsSync(targetFolderJson)) {
@@ -49,6 +49,10 @@ function updateJsonKeys(metadata, filename, patch) {
         metadata.participants = metadata.statsJson;
         delete metadata.statsJson;
     }
+    const positions = ["TOP", "JUNGLE", "MIDDLE", "BOTTOM", "UTILITY"];
+    metadata.participants.forEach((participant, index) => {
+        participant.TRUE_POSITION = positions[index % 5];
+    });
 
     return metadata;
 }
