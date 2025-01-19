@@ -30,7 +30,8 @@ merged_data = draft_analyze.merge_scrim_with_draft(scrims_df,drafts_df)
 figure_bans= draft_analyze.count_champs_bans(drafts_df,chart=True)
 st.plotly_chart(figure_bans,theme=None)
 
-
+st.subheader("Number of bans")
+figure_bansv2= draft_analyze.count_champs_bansv2(drafts_df,chart=True)
 
 ## DataFrame
 st.dataframe(drafts_df)

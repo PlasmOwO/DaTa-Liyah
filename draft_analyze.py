@@ -3,16 +3,15 @@
 #   jupytext:
 #     text_representation:
 #       extension: .py
-#       format_name: percent
-#       format_version: '1.3'
-#       jupytext_version: 1.11.2
+#       format_name: light
+#       format_version: '1.5'
+#       jupytext_version: 1.16.6
 #   kernelspec:
-#     display_name: lol_venv
+#     display_name: Python 3
 #     language: python
 #     name: python3
 # ---
 
-# %%
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
@@ -20,9 +19,15 @@ import pandas as pd
 from collections import Counter
 import itertools
 import plotly.express as plty
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+from skimage import io
+import requests
+from io import BytesIO
+import streamlit as st
 
 
-# %%
+# +
 def connect_database(database_name : str, host : str) :
     """Create connexion to Mongo Database
 
@@ -65,13 +70,14 @@ def read_and_create_dataframe(collection) -> pd.DataFrame :
     return df
 
 
-# %%
-# load_dotenv()
-# connect = connect_database('lol_match_database', host=os.getenv("ATLAS_CONNEXION_STRING"))
-# drafts = get_collection(connect,"drafts")
-# df = read_and_create_dataframe(drafts)
+# -
 
-# %%
+load_dotenv()
+connect = connect_database('lol_match_database', host=os.getenv("ATLAS_CONNEXION_STRING"))
+drafts = get_collection(connect,"drafts")
+df = read_and_create_dataframe(drafts)
+
+
 def count_champs_bans(data : pd.DataFrame, chart : bool = False) :
     """Count number of time a champion is banned for each side
 
@@ -119,13 +125,58 @@ def count_champs_bans(data : pd.DataFrame, chart : bool = False) :
     return champions_bans_df
 
 
-# %%
-# load_dotenv()
-# connect = connect_database('lol_match_database', host=os.getenv("ATLAS_CONNEXION_STRING"))
-# drafts = get_collection(connect,"drafts")
-# df = read_and_create_dataframe(drafts)
+def count_champs_bansv2(data : pd.DataFrame, chart : bool = False) :
+    """Count number of time a champion is banned for each side
 
-# %%
+    Args:
+        data (pd.DataFrame): The dataframe containing the data (filtered or not)
+        chart (bool, optional): Choice to display or not the chart. Defaults to False.
+
+    Returns:
+        
+    """
+
+    blue_bans = Counter(list(itertools.chain.from_iterable(data['blue.bans'])))
+    red_bans = Counter(list(itertools.chain.from_iterable(data['red.bans'])))
+
+    champions_bans_df = pd.DataFrame([blue_bans,red_bans]).T.rename(columns={0:'Blue',1:'Red'}).fillna(0)
+    champions_bans_df['Blue'] = champions_bans_df['Blue'].astype(int)
+    champions_bans_df['Red'] = champions_bans_df['Red'].astype(int)
+    champions_bans_df['total'] = champions_bans_df['Blue'] + champions_bans_df['Red']
+
+    champions_bans_df.sort_values(by='total',ascending=False,inplace=True)
+
+    if chart :
+        max_cols = 30  # Maximum number of columns
+        num_rows = -(-len(champions_bans_df.index) // max_cols)  
+        
+        champion_index = 0
+        for row in range(num_rows):
+            cols = st.columns(max_cols)
+            for col in cols:
+                if champion_index < len(champions_bans_df.index):
+                    champion = champions_bans_df.index[champion_index]
+                    champion = champion.replace(" ", "")
+                    champion = champion.replace("'", "")
+                    if champion == "Wukong":
+                        champion = "MonkeyKing"
+                    elif champion =="RenataGlasc":
+                        champion = "Renata"
+                    col.image("https://cdn.communitydragon.org/latest/champion/"+champion+"/square",width=50)
+                    col.markdown(f"<p style='text-align: center'>{champions_bans_df['total'].iloc[champion_index]}</p>", unsafe_allow_html=True)
+                    champion_index += 1
+                else :
+                    break
+                
+        return None
+
+    else : 
+        return champions_bans_df
+
+
+# count_champs_bansv2(df, chart=True)
+
+
 # Merge function
 def merge_scrim_with_draft(df_scrim : pd.DataFrame, df_draft : pd.DataFrame) -> pd.DataFrame :
     """Merge scrim data with draft data based on the date of the match (i.e : 03022025_2)
@@ -139,10 +190,10 @@ def merge_scrim_with_draft(df_scrim : pd.DataFrame, df_draft : pd.DataFrame) -> 
     """
     df_draft['date'] = df_draft['date'].apply(lambda x : x.replace(" ",""))
     return df_scrim.merge(df_draft, how='left', left_on="jsonFileName",right_on="date")
-# %%
+# +
 # count_champs_bans(df,chart=True)
 
-# %%
+# +
 
 def filter_by_team_and_side(collection, team_name: str, side: str):
     """
@@ -175,13 +226,13 @@ def filter_by_team_and_side(collection, team_name: str, side: str):
 
 
 
-# %%
+# +
 # blue_side_scl=filter_by_team_and_side(draft_collection,"SCL","blue")
 # red_side_scl=filter_by_team_and_side(draft_collection," Kinder Ratio ","red")
 #display(blue_side_scl)
 #display(red_side_scl)
+# -
 
-# %%
 def calculate_pick_ban_counts(
     drafts_list, min_picks=None, max_picks=None, min_bans=None,
     max_bans=None, min_presence=None, max_presence=None
@@ -262,11 +313,9 @@ def calculate_pick_ban_counts(
     return df
 
 
-# %% [markdown]
 # pick_ban_stats=calculate_pick_ban_counts(blue_side_scl)
 
 
-# %%
 def add_champion_icons(df):
     """
     Adds URLs for champion icons with correction for champion names.
@@ -311,12 +360,11 @@ def add_champion_icons(df):
     return df
 
 
-# %%
 
-# %%
+# +
 # pick_ban_stats=add_champion_icons(pick_ban_stats)
 
-# %%
+# +
 from IPython.display import display, HTML
 
 def display_champions_table_with_stats(stats):
@@ -352,10 +400,10 @@ def display_champions_table_with_stats(stats):
     display(HTML(html))
 
 
-# %%
+# +
 # display_champions_table_with_stats(pick_ban_stats)
+# -
 
-# %%
 def calculate_pick_priority(drafts, team_name, side):
     """
     Calculates pick priorities for a team, focusing on specific positions:
@@ -437,15 +485,14 @@ def calculate_pick_priority(drafts, team_name, side):
     return df.fillna(0)
 
 
-# %%
 
-# %%
+# +
 # blue_side=filter_by_team_and_side(draft_collection,"SCL","blue")
 # red_side=filter_by_team_and_side(draft_collection," Kinder Ratio ","red")
 # calculate_pick_priority(blue_side,"SCL",'blue')
 # #calculate_pick_priority(blue_side_scl," Kinder Ratio ","red")
+# -
 
-# %%
 def calculate_ban_priority_by_side(drafts, team_name, side):
     """
     Calculates the priority of the top three bans performed by a team on a specific side (blue or red).
@@ -484,7 +531,7 @@ def calculate_ban_priority_by_side(drafts, team_name, side):
     return df.sort_values(by=["Frequency", "Champion"], ascending=[False, True])
 
 
-# %%
+# +
 # blue_side=filter_by_team_and_side(draft_collection,"SCL","blue")
 # red_side=filter_by_team_and_side(draft_collection," Kinder Ratio ","red")
 # calculate_ban_priority_by_side(blue_side,"SCL",'blue')
