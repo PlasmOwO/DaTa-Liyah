@@ -55,7 +55,6 @@ def calculate_cutoffs(gm_chall_player : list,master_player : list) -> tuple :
 #HL Cutoffs
 gm_chall_player,master_player = get_league_HL_player()
 challenger_cutoff, grandmaster_cutoff = calculate_cutoffs(gm_chall_player,master_player)
-print(challenger_cutoff, grandmaster_cutoff)
 
 tiers = {
     'IRON': 0,
@@ -77,42 +76,51 @@ divisions = {
     'I': 300
 }
 
-#DB connection
-con = sqlite3.connect('soloq_tracking.db')
-cursor = con.cursor()
-database_table = cursor.execute("SELECT * FROM soloq_tracking").fetchall()
-soloq_df = pd.DataFrame(database_table, columns=["date","TOP_RANK","JNG_RANK","MID_RANK","ADC_RANK","SUP_RANK"])
-soloq_df["date"] = pd.to_datetime(soloq_df["date"])
 
 
-#Plot
-images_path = "images/rank_emblems/"
-fig = go.Figure()
 
-for role in ["TOP_RANK","JNG_RANK","MID_RANK","ADC_RANK","SUP_RANK"] :
-    fig.add_trace(go.Scatter(x=soloq_df["date"], y=soloq_df[role],mode='lines+markers',name=role))
+def plot_soloq_tracking():
+    """Connect to the database and plot evolution of ranks for each players
+
+    Returns:
+        A plotly figure
+    """
+    
+    #DB connection
+    con = sqlite3.connect('../soloq_tracking.db')
+    cursor = con.cursor()
+    database_table = cursor.execute("SELECT * FROM soloq_tracking").fetchall()
+    soloq_df = pd.DataFrame(database_table, columns=["date","TOP_RANK","JNG_RANK","MID_RANK","ADC_RANK","SUP_RANK"])
+    soloq_df["date"] = pd.to_datetime(soloq_df["date"])
+
+    #Plot
+    images_path = "images/rank_emblems/"
+    fig = go.Figure()
+
+    for role in ["TOP_RANK","JNG_RANK","MID_RANK","ADC_RANK","SUP_RANK"] :
+        fig.add_trace(go.Scatter(x=soloq_df["date"], y=soloq_df[role],mode='lines+markers',name=role))
 
 
-fig.update_layout(
-    xaxis_title='Date',
-    yaxis_title='Rank',
-    legend_title_text='Roles',
-    yaxis=dict(
-        tickmode='array',
-        tickvals=list(tiers.values()),
-        ticktext=list(tiers.keys()),
-        showgrid=True,
-        gridwidth=1,
-        zeroline=False,
-        minor=dict(
-            tickmode='linear',
-            tick0=0,
-            dtick=100,
-            gridcolor='LightGray',
-            gridwidth=0.5
+    fig.update_layout(
+        xaxis_title='Date',
+        yaxis_title='Rank',
+        legend_title_text='Roles',
+        yaxis=dict(
+            tickmode='array',
+            tickvals=list(tiers.values()),
+            ticktext=list(tiers.keys()),
+            showgrid=True,
+            gridwidth=1,
+            zeroline=False,
+            minor=dict(
+                tickmode='linear',
+                tick0=0,
+                dtick=100,
+                gridcolor='LightGray',
+                gridwidth=0.5
+            )
         )
     )
-)
+    con.close()
+    return fig
 
-fig.show()
-con.close()

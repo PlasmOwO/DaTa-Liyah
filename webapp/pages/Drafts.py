@@ -1,6 +1,7 @@
 # %%
 import sys
 import os
+from footer import footer
 sys.path.append("../")
 import draft_analyze
 import json_scrim
@@ -37,3 +38,4 @@ figure_bansv2= draft_analyze.count_champs_bansv2(drafts_df,chart=True)
 st.dataframe(drafts_df)
 
 st.dataframe(merged_data)
+footer()

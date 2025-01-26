@@ -239,7 +239,7 @@ def calculate_matchup_winrate(data: pd.DataFrame, team_dict: dict, role: str, en
 
     # Sort ny number of games played
     matchup_stats = matchup_stats.sort_values(by='GAMES', ascending=False)
-    display(matchup_stats) 
+    # display(matchup_stats) 
 
     return matchup_stats
 
