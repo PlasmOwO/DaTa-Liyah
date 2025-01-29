@@ -31,7 +31,10 @@ merged_data = draft_analyze.merge_scrim_with_draft(scrims_df,drafts_df)
 figure_bans= draft_analyze.count_champs_bans(drafts_df,chart=True)
 st.plotly_chart(figure_bans,theme=None)
 
+## Bans chart images
 st.subheader("Number of bans")
+bans_filter = st.segmented_control("Bans filter",options=["Both","Ennemies bans","Allies bans"],default="Both", selection_mode="single")
+drafts_df = draft_analyze.filter_drafts(drafts_df,"SCL",bans_filter)
 figure_bansv2= draft_analyze.count_champs_bansv2(drafts_df,chart=True)
 
 ## DataFrame

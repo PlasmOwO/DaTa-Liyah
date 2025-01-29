@@ -25,6 +25,8 @@ from skimage import io
 import requests
 from io import BytesIO
 import streamlit as st
+from typing import Literal
+
 
 
 # +
@@ -136,8 +138,8 @@ def count_champs_bansv2(data : pd.DataFrame, chart : bool = False) :
         
     """
 
-    blue_bans = Counter(list(itertools.chain.from_iterable(data['blue.bans'])))
-    red_bans = Counter(list(itertools.chain.from_iterable(data['red.bans'])))
+    blue_bans = Counter(list(itertools.chain.from_iterable(data['blue.bans'].dropna())))
+    red_bans = Counter(list(itertools.chain.from_iterable(data['red.bans'].dropna())))
 
     champions_bans_df = pd.DataFrame([blue_bans,red_bans]).T.rename(columns={0:'Blue',1:'Red'}).fillna(0)
     champions_bans_df['Blue'] = champions_bans_df['Blue'].astype(int)
@@ -194,6 +196,21 @@ def merge_scrim_with_draft(df_scrim : pd.DataFrame, df_draft : pd.DataFrame) -> 
 # count_champs_bans(df,chart=True)
 
 # +
+
+def filter_drafts(df_draft : pd.DataFrame, ally_team_tag : str,view : Literal["Both","Ennemies Bans","Allies bans"] = "Both") -> pd.DataFrame:
+
+
+    if view == "Both" :
+        return df_draft
+    elif view == "Ennemies bans" :
+        blue_bans = df_draft.loc[df_draft['blue.team']!=ally_team_tag,['blue.bans']]
+        red_bans = df_draft.loc[df_draft['red.team']!= ally_team_tag,['red.bans']]
+
+    elif view == "Allies bans" :
+        blue_bans = df_draft.loc[df_draft['blue.team']== ally_team_tag,['blue.bans']]
+        red_bans = df_draft.loc[df_draft['red.team']== ally_team_tag,['red.bans']]
+
+    return pd.concat([blue_bans,red_bans])
 
 def filter_by_team_and_side(collection, team_name: str, side: str):
     """
@@ -316,48 +333,48 @@ def calculate_pick_ban_counts(
 # pick_ban_stats=calculate_pick_ban_counts(blue_side_scl)
 
 
-def add_champion_icons(df):
-    """
-    Adds URLs for champion icons with correction for champion names.
+# def add_champion_icons(df):
+#     """
+#     Adds URLs for champion icons with correction for champion names.
 
-    Args:
-        df (pd.DataFrame): DataFrame containing the names of the champions.
+#     Args:
+#         df (pd.DataFrame): DataFrame containing the names of the champions.
 
-    Returns:
-        pd.DataFrame: DataFrame with an additional column for champion icons.
-    """
-    # Base URL for the champion icons
-    base_url = "https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/"
+#     Returns:
+#         pd.DataFrame: DataFrame with an additional column for champion icons.
+#     """
+#     # Base URL for the champion icons
+#     base_url = "https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/"
     
-    # Mapping to correct champion names for the API
-    champion_name_corrections = {
-        "Dr. Mundo": "DrMundo",
-        "Cho'Gath": "Chogath",
-        "Kai'Sa": "Kaisa",
-        "Kha'Zix": "Khazix",
-        "LeBlanc": "Leblanc",
-        "Nunu & Willump": "Nunu",
-        "Vel'Koz": "Velkoz",
-        "Wukong": "MonkeyKing",
-        "Rek'Sai": "RekSai",
-        "Tahm Kench": "TahmKench",
-        "Aurelion Sol": "AurelionSol",
-        "Xin Zhao": "XinZhao",
-        "K'Sante": "KSante",
-        "Miss Fortune": "MissFortune"
-        # Add more corrections if needed
-    }
+#     # Mapping to correct champion names for the API
+#     champion_name_corrections = {
+#         "Dr. Mundo": "DrMundo",
+#         "Cho'Gath": "Chogath",
+#         "Kai'Sa": "Kaisa",
+#         "Kha'Zix": "Khazix",
+#         "LeBlanc": "Leblanc",
+#         "Nunu & Willump": "Nunu",
+#         "Vel'Koz": "Velkoz",
+#         "Wukong": "MonkeyKing",
+#         "Rek'Sai": "RekSai",
+#         "Tahm Kench": "TahmKench",
+#         "Aurelion Sol": "AurelionSol",
+#         "Xin Zhao": "XinZhao",
+#         "K'Sante": "KSante",
+#         "Miss Fortune": "MissFortune"
+#         # Add more corrections if needed
+#     }
     
-    # Apply corrections to champion names
-    df["Corrected Champion"] = df["Champion"].apply(
-        lambda x: champion_name_corrections.get(x, x)
-    )
+#     # Apply corrections to champion names
+#     df["Corrected Champion"] = df["Champion"].apply(
+#         lambda x: champion_name_corrections.get(x, x)
+#     )
     
-    # Create a new column 'Icon' with the corrected URLs
-    df["Icon"] = df["Corrected Champion"].apply(lambda x: f"{base_url}{x}.png")
+#     # Create a new column 'Icon' with the corrected URLs
+#     df["Icon"] = df["Corrected Champion"].apply(lambda x: f"{base_url}{x}.png")
     
-    # Return the updated DataFrame
-    return df
+#     # Return the updated DataFrame
+#     return df
 
 
 
@@ -365,39 +382,39 @@ def add_champion_icons(df):
 # pick_ban_stats=add_champion_icons(pick_ban_stats)
 
 # +
-from IPython.display import display, HTML
+# from IPython.display import display, HTML
 
-def display_champions_table_with_stats(stats):
-    """
-    Displays an HTML table with champion icons, names, and their statistics.
+# def display_champions_table_with_stats(stats):
+#     """
+#     Displays an HTML table with champion icons, names, and their statistics.
 
-    Args:
-        stats (pd.DataFrame): DataFrame containing champion statistics.
+#     Args:
+#         stats (pd.DataFrame): DataFrame containing champion statistics.
 
-    Returns:
-        None: Displays the table directly in a Jupyter Notebook.
-    """
-    # Initialize the HTML content for the table container
-    html = "<div style='display: flex; flex-wrap: wrap;'>"
+#     Returns:
+#         None: Displays the table directly in a Jupyter Notebook.
+#     """
+#     # Initialize the HTML content for the table container
+#     html = "<div style='display: flex; flex-wrap: wrap;'>"
     
-    # Iterate through each row in the DataFrame
-    for _, row in stats.iterrows():
-        # Add a champion card for each row with icon, name, and stats
-        html += f"""
-        <div style='margin: 5px; text-align: center;'>
-            <img src='{row["Icon"]}' style='width: 50px; height: 50px; border-radius: 5px;'><br>
-            <span style='font-size: 12px; font-weight: bold;'>{row["Champion"]}</span><br>
-            <span style='font-size: 10px;'>Picks: {row["Pick Count"]}</span><br>
-            <span style='font-size: 10px;'>Bans: {row["Ban Count"]}</span><br>
-            <span style='font-size: 10px;'>Presence: {row["Presence"]}</span>
-        </div>
-        """
+#     # Iterate through each row in the DataFrame
+#     for _, row in stats.iterrows():
+#         # Add a champion card for each row with icon, name, and stats
+#         html += f"""
+#         <div style='margin: 5px; text-align: center;'>
+#             <img src='{row["Icon"]}' style='width: 50px; height: 50px; border-radius: 5px;'><br>
+#             <span style='font-size: 12px; font-weight: bold;'>{row["Champion"]}</span><br>
+#             <span style='font-size: 10px;'>Picks: {row["Pick Count"]}</span><br>
+#             <span style='font-size: 10px;'>Bans: {row["Ban Count"]}</span><br>
+#             <span style='font-size: 10px;'>Presence: {row["Presence"]}</span>
+#         </div>
+#         """
     
-    # Close the container
-    html += "</div>"
+#     # Close the container
+#     html += "</div>"
     
-    # Display the generated HTML
-    display(HTML(html))
+#     # Display the generated HTML
+#     display(HTML(html))
 
 
 # +
