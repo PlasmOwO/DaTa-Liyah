@@ -199,12 +199,13 @@ def merge_scrim_with_draft(df_scrim : pd.DataFrame, df_draft : pd.DataFrame) -> 
 
 def filter_drafts(df_draft : pd.DataFrame, ally_team_tag : str,view : Literal["Both","Ennemies Bans","Allies bans"] = "Both") -> pd.DataFrame:
 
-
     if view == "Both" :
-        return df_draft
+        blue_bans = df_draft[['blue.bans']]
+        red_bans = df_draft[['red.bans']]
     elif view == "Ennemies bans" :
-        blue_bans = df_draft.loc[df_draft['blue.team']!=ally_team_tag,['blue.bans']]
-        red_bans = df_draft.loc[df_draft['red.team']!= ally_team_tag,['red.bans']]
+        #Filter on enemies ban where we played vs them
+        blue_bans = df_draft.loc[(df_draft['blue.team']!=ally_team_tag) & (df_draft['red.team']==ally_team_tag),['blue.bans']]
+        red_bans = df_draft.loc[(df_draft['red.team']!= ally_team_tag) & (df_draft['blue.team']==ally_team_tag),['red.bans']]
 
     elif view == "Allies bans" :
         blue_bans = df_draft.loc[df_draft['blue.team']== ally_team_tag,['blue.bans']]
