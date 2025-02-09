@@ -5,14 +5,18 @@ from footer import footer
 import os
 import sys
 from dotenv import load_dotenv
-load_dotenv()
+
+import streamlit as st
+
+# Check user connection
+if st.session_state['authentication_status'] is None or st.session_state['authentication_status'] is False:
+    st.error('Please login to access this page')
+    st.stop()
+
 sys.path.append("../")
 
 import json_scrim
-import streamlit as st
-
-
-
+load_dotenv()
 # %% [markdown]
 # ### Dictionnary of teams
 

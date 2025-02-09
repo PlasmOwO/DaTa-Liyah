@@ -2,9 +2,8 @@
 import sys
 import os
 from footer import footer
-sys.path.append("../")
-import draft_analyze
-import json_scrim
+
+
 from dotenv import load_dotenv
 import streamlit as st
 import pandas as pd
@@ -13,8 +12,14 @@ from pymongo import MongoClient
 from collections import Counter
 import plotly.express as plty
 
-
+# Check user connection
+if st.session_state['authentication_status'] is None or st.session_state['authentication_status'] is False:
+    st.error('Please login to access this page')
+    st.stop()
 load_dotenv()
+sys.path.append("../")
+import draft_analyze
+import json_scrim
 
 # %%
 ## Draft analyze
