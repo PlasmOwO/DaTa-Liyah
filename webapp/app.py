@@ -11,8 +11,8 @@ import streamlit_authenticator as stauth
 #Import config :
 st.set_page_config(layout="wide")
 
-with open('config.yaml') as file:
-    config = yaml.load(file, Loader=SafeLoader)
+# with open('config.yaml') as file:
+#     config = yaml.load(file, Loader=SafeLoader)
 if 'authentication_status' not in st.session_state:
     st.session_state['authentication_status'] = None
 
