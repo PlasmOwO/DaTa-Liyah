@@ -1,0 +1,13 @@
+requests
+numpy
+pandas
+plotly
+pymongo
+python-dotenv
+beautifulsoup4
+streamlit
+selenium
+streamlit-authenticator
+gspread
+htbuilder
+scikit-image
