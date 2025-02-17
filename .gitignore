@@ -6,3 +6,4 @@ json_folder
 __pycache__
 node_modules
 *.yaml
+.streamlit
