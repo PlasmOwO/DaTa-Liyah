@@ -24,11 +24,18 @@ else :
     st.title(f"Welcome to the League of Legends Dashboard : *{st.session_state['name']}*")
 
 
-## Login form
-authenticator = stauth.Authenticate(config['credentials'],
-                                    config['cookie']['name'],
-                                    config['cookie']['key'],
-                                    config['cookie']['expiry_days']
+## Login form yaml locally
+# authenticator = stauth.Authenticate(config['credentials'],
+#                                     config['cookie']['name'],
+#                                     config['cookie']['key'],
+#                                     config['cookie']['expiry_days']
+#                                     )
+
+## Login form with st secrets
+authenticator = stauth.Authenticate(dict(st.secrets['credentials']),
+                                    st.secrets['cookie']['name'],
+                                    st.secrets['cookie']['key'],
+                                    st.secrets['cookie']['expiry_days']
                                     )
 
 try:
