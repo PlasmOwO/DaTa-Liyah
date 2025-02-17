@@ -32,7 +32,7 @@ else :
 #                                     )
 
 ## Login form with st secrets
-authenticator = stauth.Authenticate(dict(st.secrets['credentials']),
+authenticator = stauth.Authenticate(st.secrets['credentials'].to_dict(),
                                     st.secrets['cookie']['name'],
                                     st.secrets['cookie']['key'],
                                     st.secrets['cookie']['expiry_days']
