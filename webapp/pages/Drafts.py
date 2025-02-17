@@ -17,7 +17,7 @@ if st.session_state['authentication_status'] is None or st.session_state['authen
     st.error('Please login to access this page')
     st.stop()
 load_dotenv()
-sys.path.append("../")
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 import draft_analyze
 import json_scrim
 

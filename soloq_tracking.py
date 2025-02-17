@@ -87,7 +87,7 @@ def plot_soloq_tracking():
     """
     
     #DB connection
-    con = sqlite3.connect('../soloq_tracking.db')
+    con = sqlite3.connect('soloq_tracking.db')
     cursor = con.cursor()
     database_table = cursor.execute("SELECT * FROM soloq_tracking").fetchall()
     soloq_df = pd.DataFrame(database_table, columns=["date","TOP_RANK","JNG_RANK","MID_RANK","ADC_RANK","SUP_RANK"])
