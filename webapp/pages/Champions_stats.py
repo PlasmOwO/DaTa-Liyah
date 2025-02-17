@@ -13,6 +13,7 @@ if st.session_state['authentication_status'] is None or st.session_state['authen
     st.error('Please login to access this page')
     st.stop()
 
+print(os.getcwd())
 import json_scrim
 load_dotenv()
 # %% [markdown]
