@@ -8,10 +8,13 @@ load_dotenv()
 import os
 import requests
 from typing import Literal
+import streamlit as st
 #https://github.com/Allan-Cao
 
-API_KEY = os.getenv("API_KEY")
+# for use with dotenv
+# API_KEY = os.getenv("API_KEY")
 
+API_KEY = st.secrets["API_KEY"]['key']
 
 def get_league_HL_player() -> tuple:
     """Request the API to get all master+ players
