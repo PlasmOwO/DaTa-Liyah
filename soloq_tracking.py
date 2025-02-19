@@ -9,6 +9,7 @@ import os
 import requests
 from typing import Literal
 import streamlit as st
+import sqlitecloud
 #https://github.com/Allan-Cao
 
 # for use with dotenv
@@ -90,7 +91,7 @@ def plot_soloq_tracking():
     """
     
     #DB connection
-    con = sqlite3.connect('soloq_tracking.db')
+    con = sqlitecloud.connect(st.secrets["SOLOQ_DB"]["RO_connection_string"])
     cursor = con.cursor()
     database_table = cursor.execute("SELECT * FROM soloq_tracking").fetchall()
     soloq_df = pd.DataFrame(database_table, columns=["date","TOP_RANK","JNG_RANK","MID_RANK","ADC_RANK","SUP_RANK"])
