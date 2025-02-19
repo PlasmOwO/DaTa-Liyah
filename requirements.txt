@@ -11,3 +11,4 @@ streamlit-authenticator
 gspread
 htbuilder
 scikit-image
+sqlitecloud

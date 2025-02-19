@@ -4,9 +4,11 @@ from dotenv import load_dotenv
 import os
 import sqlite3
 import datetime
+import sqlitecloud
 load_dotenv()
 
 API_KEY = os.getenv("API_KEY")
+DB_CONNECTION_STRING = os.getenv("SOLOQ_DB_ADMIN_CONNECTION_STRING")
 tiers = {
     'IRON': 0,
     'BRONZE': 400,
@@ -35,6 +37,9 @@ def convert_datetime(val):
 # Register the adapter and converter with sqlite3
 sqlite3.register_adapter(datetime.datetime, adapt_datetime)
 sqlite3.register_converter("datetime", convert_datetime)
+
+sqlitecloud.register_adapter(datetime.datetime, adapt_datetime)
+sqlitecloud.register_converter("datetime", convert_datetime)
 
 def lol_rank_to_numeric(player_tier : str ,player_lp : int ,player_division : str = '' ) -> int : 
     """Transform the rank of a player into a numeric value
@@ -84,7 +89,19 @@ for puuid in player_puuid :
     list_tracking_player.append(lol_rank_to_numeric(rank_player[0],rank_player[2],rank_player[1]))
 print(list_tracking_player)
 
+
+#Write in local (backup for the moment)
 con = sqlite3.connect('soloq_tracking.db')
+cursor = con.cursor()
+cursor.execute("CREATE TABLE IF NOT EXISTS soloq_tracking (date TIMESTAMP PRIMARY KEY, TOP_RANK TEXT, JNG_RANK TEXT, MID_RANK TEXT, ADC_RANK TEXT, SUP_RANK TEXT)")
+date_now = datetime.datetime.now()
+cursor.execute("INSERT INTO soloq_tracking (date, TOP_RANK, JNG_RANK, MID_RANK, ADC_RANK, SUP_RANK) VALUES (?,?,?,?,?,?)",(date_now,list_tracking_player[0],list_tracking_player[1],list_tracking_player[2],list_tracking_player[3],list_tracking_player[4]))
+con.commit()
+con.close()
+
+
+#Write in sqlitecloud
+con = sqlitecloud.connect(DB_CONNECTION_STRING)
 cursor = con.cursor()
 cursor.execute("CREATE TABLE IF NOT EXISTS soloq_tracking (date TIMESTAMP PRIMARY KEY, TOP_RANK TEXT, JNG_RANK TEXT, MID_RANK TEXT, ADC_RANK TEXT, SUP_RANK TEXT)")
 date_now = datetime.datetime.now()
