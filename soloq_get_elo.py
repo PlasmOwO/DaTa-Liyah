@@ -80,10 +80,11 @@ for puuid in player_puuid :
     
     rank_player = []
     for key in keys_dict:
-        if len(tracking_player_json) ==0 :
+        ranked_solo = next((item for item in tracking_player_json if item.get("queueType") == "RANKED_SOLO_5x5"), None)
+        if len(tracking_player_json) == 0 or ranked_solo is None:
             rank_player.append(None)
-        else :
-            rank_player.append(tracking_player_json[0].get(key))
+        else:
+            rank_player.append(ranked_solo.get(key))
 
     #FIXME when Master will be reached
     list_tracking_player.append(lol_rank_to_numeric(rank_player[0],rank_player[2],rank_player[1]))
