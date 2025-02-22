@@ -23,7 +23,7 @@ import json_scrim
 
 # %%
 ## Draft analyze
-connect = draft_analyze.connect_database('lol_match_database', host=st.secrets["MONGODB_DB"]["RO_connection_string"])
+connect = draft_analyze.connect_database('lol_match_database', host=st.secrets["MONGO_DB"]["RO_connection_string"])
 drafts = draft_analyze.get_collection(connect,"drafts")
 drafts_df = draft_analyze.read_and_create_dataframe(drafts)
 scrims = json_scrim.get_collection(connect, "scrim_matches")
