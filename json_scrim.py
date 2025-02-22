@@ -78,14 +78,7 @@ def read_and_create_dataframe(collection) -> pd.DataFrame :
 # %% [markdown]
 # ### Team dico
 
-# %%
-team_scald_dico = {
-    "TOP" : ["a2f2aa07-9633-5e7a-9f38-7c16c69a9e21"],
-    "JUNGLE" : ["273ae685-12da-5942-9e93-46dd2620f8ff"],
-    "MIDDLE" : ["df39f5ef-6758-5669-82fe-f7d96aac3d2c"],
-    "BOTTOM": ["9af56d81-a4c0-5447-b465-dd203dd80c6f"],
-    "UTILITY" : ["3b463f3c-f0b3-5063-89dd-fe763bc3d4a2"]
-}
+
 
 
 # %% [markdown]
@@ -105,9 +98,7 @@ def filter_data_on_team(data : pd.DataFrame,team_dict : dict) -> pd.DataFrame :
     return data.loc[data['PUUID'].apply(lambda puuid: any(puuid in sublist for sublist in team_dict.values()))]
 
 
-# %%
-# scl = filter_data_on_team(data_scrim_matches,team_scald_dico)
-# scl[['PUUID','SKIN','TRUE_POSITION']].loc[scl['PUUID']=="a2f2aa07-9633-5e7a-9f38-7c16c69a9e21"]
+
 
 
 # %%
@@ -243,8 +234,6 @@ def calculate_matchup_winrate(data: pd.DataFrame, team_dict: dict, role: str, en
 
     return matchup_stats
 
-# %%
-# matchup_winrate =calculate_matchup_winrate(data_scrim_matches,team_scald_dico,role="TOP")
 
 
 # %%
@@ -284,7 +273,3 @@ def calculate_duo_winrate(filtered_data: pd.DataFrame, roles: tuple = ("MIDDLE",
     
 
     return duo_stats
-
-
-# %%
-# duo_stats = calculate_duo_winrate(filter_data_on_team(data_scrim_matches,team_scald_dico), roles=("UTILITY", "BOTTOM"))
