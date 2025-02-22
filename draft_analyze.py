@@ -75,7 +75,8 @@ def read_and_create_dataframe(collection) -> pd.DataFrame :
 # -
 
 load_dotenv()
-connect = connect_database('lol_match_database', host=os.getenv("ATLAS_CONNEXION_STRING"))
+mongo_host = st.secrets["MONGO_DB"]["RO_connection_string"]
+connect = connect_database('lol_match_database', host=mongo_host)
 drafts = get_collection(connect,"drafts")
 df = read_and_create_dataframe(drafts)
 
