@@ -31,7 +31,7 @@ team_scald_dico = {
 
 # %%
 #Connect to database
-connect = json_scrim.connect_database('lol_match_database', host=os.getenv("ATLAS_CONNEXION_STRING"))
+connect = json_scrim.connect_database('lol_match_database', host=st.secrets["MONGO_DB"]["RO_connection_string"])
 scrim_matches = json_scrim.get_collection(connect,"scrim_matches")
 data_scrim_matches = json_scrim.read_and_create_dataframe(scrim_matches)
 #Filter data
