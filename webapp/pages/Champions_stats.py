@@ -20,13 +20,7 @@ load_dotenv()
 # ### Dictionnary of teams
 
 # %%
-team_scald_dico = {
-    "TOP" : ["a2f2aa07-9633-5e7a-9f38-7c16c69a9e21","260e7648-da41-55fd-bdcf-9c646ee9389e"],
-    "JUNGLE" : ["273ae685-12da-5942-9e93-46dd2620f8ff","662ef392-4e6b-5e18-9ca0-e57dba5dbfbb","1ecd999b-4516-56c6-8692-8ff21d117f4d"],
-    "MIDDLE" : ["df39f5ef-6758-5669-82fe-f7d96aac3d2c","729f0384-49c9-5965-a763-a649338ab3d1"],
-    "BOTTOM": ["9af56d81-a4c0-5447-b465-dd203dd80c6f","ea56e192-777f-5be5-be48-eca7df2c59dc"],
-    "UTILITY" : ["3b463f3c-f0b3-5063-89dd-fe763bc3d4a2","c598bb9e-c4a0-594d-b583-ceecc3720c53"]
-}
+team_scald_dico = st.secrets["TEAM_SCRIM_ID"]
 
 
 # %%
