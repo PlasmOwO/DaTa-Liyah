@@ -114,23 +114,6 @@ filenames.forEach((file) => {
 
 console.log(`Les métadonnées ont été converties et sauvegardées dans : ${targetFolderJson}`);
 
-const { exec } = require('child_process');
-
-// exec('python push_json_to_db.py', (error, stdout, stderr) => {
-//     if (error) {
-//         console.error(`Error executing script: ${error.message}`);
-//         return;
-//     }
-
-//     if (stderr) {
-//         console.error(`Error in script: ${stderr}`);
-//         return;
-//     }
-
-//     console.log(`Output:\n${stdout}`);
-// });
-
-
 const pythonProcess = spawn("python", ["push_json_to_db.py", ...args], {
     stdio: "inherit", // Affiche la sortie du script Python dans la console  
     env: process.env
