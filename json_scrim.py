@@ -135,9 +135,10 @@ def table_winrate_champs(data : pd.DataFrame) :
 
         df_player = pd.DataFrame(data= {'Count' : all,'Win' : win}).fillna(0)
         df_player = df_player.astype({'Win' : int})
-        df_player['Winrate'] = ((df_player['Win'] / df_player['Count']) * 100).round(2)
-        
+        df_player['Winrate (%)'] = ((df_player['Win'] / df_player['Count']) * 100).round(2)
+        df_player.sort_values(by='Count',ascending=False,inplace=True)
 
+        #to add % to winrate
         top_to_bot_champs.append(df_player)    
     return top_to_bot_champs
 
