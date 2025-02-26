@@ -7,3 +7,5 @@ __pycache__
 node_modules
 *.yaml
 .streamlit
+json_folder
+rofl_backup

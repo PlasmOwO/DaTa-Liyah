@@ -6,9 +6,9 @@ const path = require('path');
 const args = process.argv.slice(2);
 
 // Dossier source et cible
-const sourceFolderRofl = '../rofl_folder';
-const targetFolderJson = '../json_folder';
-const backupFolderRofl = '../rofl_backup';
+const sourceFolderRofl = './rofl_folder';
+const targetFolderJson = './json_folder';
+const backupFolderRofl = './rofl_backup';
 
 let pythonPath = "";
 
