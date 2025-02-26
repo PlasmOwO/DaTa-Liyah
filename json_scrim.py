@@ -73,16 +73,7 @@ def read_and_create_dataframe(collection) -> pd.DataFrame :
 # connect = connect_database('lol_match_database', host=os.getenv("ATLAS_CONNEXION_STRING"))
 # scrim_matches = get_collection(connect,"scrim_matches")
 # data_scrim_matches = read_and_create_dataframe(scrim_matches)
-# data_scrim_matches[['PUUID','SKIN']].loc[data_scrim_matches['PUUID']=="a2f2aa07-9633-5e7a-9f38-7c16c69a9e21"]
 
-# %% [markdown]
-# ### Team dico
-
-
-
-
-# %% [markdown]
-# ### 
 
 # %%
 def filter_data_on_team(data : pd.DataFrame,team_dict : dict) -> pd.DataFrame :
@@ -127,7 +118,7 @@ def get_winrate_by_side(data : pd.DataFrame, chart = False) :
 
 # %%
 def table_winrate_champs(data : pd.DataFrame) :
-    """Retrieve and groupby champion from the dataFrame and get number of game and number of win. Use this with filtered data.
+    """Retrieve and groupby champion from the dataFrame and get number of game and number of win (+winrate). Use this with filtered data.
 
     Args:
         data (pd.DataFrame): The filtered DataFrame
@@ -144,13 +135,14 @@ def table_winrate_champs(data : pd.DataFrame) :
 
         df_player = pd.DataFrame(data= {'Count' : all,'Win' : win}).fillna(0)
         df_player = df_player.astype({'Win' : int})
-
+        df_player['Winrate'] = ((df_player['Win'] / df_player['Count']) * 100).round(2)
+        
 
         top_to_bot_champs.append(df_player)    
     return top_to_bot_champs
 
 # %%
-# table_winrate_champs(scl)
+# print(table_winrate_champs(data_scrim_matches))
 
 
 # %%
