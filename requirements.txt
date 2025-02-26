@@ -2,6 +2,7 @@ requests
 numpy
 pandas
 plotly
+dotenv
 pymongo
 python-dotenv
 beautifulsoup4

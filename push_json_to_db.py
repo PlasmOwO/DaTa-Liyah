@@ -4,7 +4,7 @@ import os  # Import os to work with directories
 from dotenv import load_dotenv
 load_dotenv()
 
-sourceJsonFolder = "./json_folder"
+sourceJsonFolder = "../json_folder"
 
 myclient = pymongo.MongoClient(host=os.getenv("ATLAS_CONNEXION_STRING"))
 db = myclient["lol_match_database"]
