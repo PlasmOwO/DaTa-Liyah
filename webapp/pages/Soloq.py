@@ -9,6 +9,8 @@ import streamlit as st
 
 
 # Check user connection
+if 'authentication_status' not in st.session_state:
+    st.session_state['authentication_status'] = None
 if st.session_state['authentication_status'] is None or st.session_state['authentication_status'] is False:
     st.error('Please login to access this page')
     st.stop()
