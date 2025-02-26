@@ -1,10 +1,27 @@
 const { ROFLReader } = require('rofl-parser.js');
+const { spawn } = require("child_process");
 const fs = require('fs');
 const path = require('path');
+
+const args = process.argv.slice(2);
 
 // Dossier source et cible
 const sourceFolderRofl = './rofl_folder';
 const targetFolderJson = './json_folder';
+const backupFolderRofl = './rofl_backup';
+
+let pythonPath = "";
+
+args.forEach(arg => {
+    if (arg.startsWith("--python_path=")) {
+        pythonPath = arg.split("=")[1];
+    }
+});
+
+if (pythonPath) {
+    process.env.PYTHONPATH = pythonPath;
+    console.log(`Ajout de ${pythonPath} à PYTHONPATH`);
+}
 
 // Vérifier si le dossier cible existe, sinon le créer
 if (!fs.existsSync(targetFolderJson)) {
@@ -83,10 +100,13 @@ filenames.forEach((file) => {
             console.error(`Erreur lors de la conversion du fichier ${file} :`, error.message);
         }
 
-        // fs.unlink(roflFile , (err) => {
-        //     if (err) console.error(`Erreur lors de la suppression du fichier ${file} :`, err.message);
-        //     else console.log(`Fichier supprimé : ${file}`);
-        // });
+        fs.copyFileSync(roflFile, path.join(backupFolderRofl, file));
+        console.log(`Fichier sauvegardé dans ${backupFolderRofl}`);
+
+        fs.unlink(roflFile , (err) => {
+            if (err) console.error(`Erreur lors de la suppression du fichier ${file} :`, err.message);
+            else console.log(`Fichier supprimé : ${file}`);
+        });
     } else {
         console.log(`Fichier ignoré (non-ROFL) : ${file}`);
     }
@@ -94,18 +114,11 @@ filenames.forEach((file) => {
 
 console.log(`Les métadonnées ont été converties et sauvegardées dans : ${targetFolderJson}`);
 
-const { exec } = require('child_process');
+const pythonProcess = spawn("python", ["push_json_to_db.py", ...args], {
+    stdio: "inherit", // Affiche la sortie du script Python dans la console  
+    env: process.env
+});
 
-exec('python push_json_to_db.py', (error, stdout, stderr) => {
-    if (error) {
-        console.error(`Error executing script: ${error.message}`);
-        return;
-    }
-
-    if (stderr) {
-        console.error(`Error in script: ${stderr}`);
-        return;
-    }
-
-    console.log(`Output:\n${stdout}`);
+pythonProcess.on("close", code => {
+    console.log(`Processus Python terminé avec le code ${code}`);
 });

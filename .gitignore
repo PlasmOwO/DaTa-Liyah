@@ -2,6 +2,7 @@
 *.db
 *.json
 rofl_folder
+rofl_backup
 json_folder
 __pycache__
 node_modules
