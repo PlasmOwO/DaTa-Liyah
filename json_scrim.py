@@ -137,9 +137,10 @@ def table_winrate_champs(data : pd.DataFrame) :
         df_player = df_player.astype({'Win' : int})
         df_player['Winrate (%)'] = ((df_player['Win'] / df_player['Count']) * 100).round(2)
         df_player.sort_values(by='Count',ascending=False,inplace=True)
+        df_player = df_player.style.background_gradient(subset=['Winrate (%)'], cmap='RdYlGn', vmin=0, vmax=100)
 
-        #to add % to winrate
-        top_to_bot_champs.append(df_player)    
+        top_to_bot_champs.append(df_player)   
+        #to add conditionnal formatting
     return top_to_bot_champs
 
 # %%
