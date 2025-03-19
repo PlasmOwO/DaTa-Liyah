@@ -7,6 +7,11 @@ from footer import footer
 import yaml
 from yaml import SafeLoader
 import streamlit_authenticator as stauth
+import pandas as pd
+import os
+import sys
+import altair as alt
+import datetime
 
 #Import config :
 st.set_page_config(layout="wide")
@@ -49,9 +54,35 @@ elif st.session_state['authentication_status'] is None:
     st.warning('Please enter your username and password')
 elif st.session_state['authentication_status']:
     authenticator.logout(location='sidebar')
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
     
-    ## Page 1 : Tendances
+    import json_scrim
+    connect = json_scrim.connect_database('lol_match_database', host=st.secrets["MONGO_DB"]["RO_connection_string"])
+    scrim_matches = json_scrim.get_collection(connect, "scrim_matches")
+    data_scrim_matches = json_scrim.read_and_create_dataframe(scrim_matches)
+
+    team_dico = st.secrets["TEAM_SCRIM_ID"]
+    team_games = json_scrim.filter_data_on_team(data_scrim_matches, team_dict=team_dico)
+
     st.title("Dashboard League of Legends")
+
+    # winrate_by_side = json_scrim.get_winrate_by_side(team_games, False)
+    winrate_by_side = json_scrim.get_winrate_by_side_every_two_weeks(team_games, False)
+    st.write(winrate_by_side)
+    # st.write("Winrate by side:")
+    # # print(winrate_by_side)
+    # df_winrate = pd.DataFrame([winrate_by_side])
+    # blue_winrate = df_winrate['blue']
+    # red_winrate = df_winrate['red']
+    # st.write(df_winrate)
+    # st.write(f"Blue winrate: {blue_winrate}")
+    # Création du bar chart avec Altair
+    # st.bar_chart(df_winrate)
+    # df = pd.DataFrame(data_scrim_matches)
+    # st.write(df)    
+    # st.write(test)
+    #Filter data
+
 
 footer()
 
