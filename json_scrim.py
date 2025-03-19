@@ -260,10 +260,9 @@ def calculate_duo_winrate(filtered_data: pd.DataFrame, roles: tuple = ("MIDDLE",
     ).reset_index()
 
     # Calculate the winrate
-    duo_stats['WINRATE'] = (duo_stats['WINS'] / duo_stats['GAMES']) * 100
+    duo_stats['Winrate (%)'] = (duo_stats['WINS'] / duo_stats['GAMES']) * 100
 
     # Sort by the number of games played
     duo_stats = duo_stats.sort_values(by='GAMES', ascending=False)
-    
-
+    duo_stats = duo_stats.style.background_gradient(subset=['Winrate (%)'], cmap='RdYlGn', vmin=0, vmax=100)
     return duo_stats

@@ -46,9 +46,13 @@ for role in range (0,5):
 
 # %%
 #Winrate duomatch
-st.write("Duo winrate ADC/SUP")
-botlane_winrate = json_scrim.calculate_duo_winrate(team_filtered_games,roles=["BOTTOM","UTILITY"])
-st.dataframe(botlane_winrate, use_container_width=True)
+st.write("Duo winrate")
+selected_roles = st.multiselect("Select roles", ["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"], default=["BOTTOM","UTILITY"], max_selections=2)
+if len(selected_roles) <2 :
+    st.info("You need to select 2 roles.", icon="ℹ️")
+else :
+    duo_winrate = json_scrim.calculate_duo_winrate(team_filtered_games,roles=selected_roles)
+    st.dataframe(duo_winrate, use_container_width=True)
 
 # %%
 footer()
