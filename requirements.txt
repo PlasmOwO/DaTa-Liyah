@@ -12,3 +12,4 @@ gspread
 htbuilder
 scikit-image
 sqlitecloud
+matplotlib
