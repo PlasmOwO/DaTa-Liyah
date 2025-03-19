@@ -165,8 +165,21 @@ def count_champs_bansv2(data : pd.DataFrame, chart : bool = False) :
                         champion = "MonkeyKing"
                     elif champion =="RenataGlasc":
                         champion = "Renata"
+
+                    blue_proportion = champions_bans_df['Blue'].iloc[champion_index] / champions_bans_df['total'].iloc[champion_index]
+                    red_proportion = champions_bans_df['Red'].iloc[champion_index] / champions_bans_df['total'].iloc[champion_index]
+                    
                     col.image("https://cdn.communitydragon.org/latest/champion/"+champion+"/square",width=50)
+                    # bar for blue and red proportion
+                    col.markdown(f"""
+                        <div style="width: 100%; height: 10px; display: flex;">
+                            <div style="width: {blue_proportion*100}%; height: 100%; background-color: blue;"></div>
+                            <div style="width: {red_proportion*100}%; height: 100%; background-color: red;"></div>
+                        </div>
+                    """, unsafe_allow_html=True)
                     col.markdown(f"<p style='text-align: center'>{champions_bans_df['total'].iloc[champion_index]}</p>", unsafe_allow_html=True)
+
+                    
                     champion_index += 1
                 else :
                     break
