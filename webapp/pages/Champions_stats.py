@@ -52,7 +52,7 @@ if len(selected_roles) <2 :
     st.info("You need to select 2 roles.", icon="ℹ️")
 else :
     duo_winrate = json_scrim.calculate_duo_winrate(team_filtered_games,roles=selected_roles)
-    st.dataframe(duo_winrate, use_container_width=True)
+    st.dataframe(duo_winrate, use_container_width=True,hide_index=True)
 
 # %%
 footer()

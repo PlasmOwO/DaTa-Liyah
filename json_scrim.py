@@ -116,11 +116,12 @@ def get_winrate_by_side(data : pd.DataFrame, chart = False) :
 def get_winrate_by_side_every_two_weeks(data : pd.DataFrame, chart = False) :
     """Retrieve and groupby champion from the dataFrame and get number of game and number of win (+winrate) every two weeks."""
     # retrive date_time regexpour clear numero de game tranformen format bien puis boucler dessus
+    data = data.copy()
     data['formatted_date'] = data['jsonFileName'].apply(lambda x: datetime.strptime(x.split("_")[0], "%d%m%Y").strftime("%d-%m-%Y"))
     data['week_of_the_year'] = data['formatted_date'].apply(lambda x: datetime.strptime(x, "%d-%m-%Y").isocalendar()[1])
 
     data['paired_week'] = data['week_of_the_year'].apply(lambda x: x + 1 if x % 2 != 0 else x)
-    print("Semaines disponibles dans data :", data['week_of_the_year'].unique())
+    #print("Semaines disponibles dans data :", data['week_of_the_year'].unique())
     winrate_blue = (
         data.loc[(data['WIN'] == 'Win') & (data['TEAM'] == '100')]
         .groupby('paired_week')['WIN'].count() /
