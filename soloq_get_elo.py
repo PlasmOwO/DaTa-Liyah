@@ -103,6 +103,11 @@ con.close()
 
 #Write in sqlitecloud
 con = sqlitecloud.connect(DB_CONNECTION_STRING)
+if not con.is_connected():
+    with open('sqlitecloud.log',"a") as log :
+        log.write(str(datetime.datetime.now())+ "  ----   Connection failed\n")
+    con.close()
+    exit()
 cursor = con.cursor()
 cursor.execute("CREATE TABLE IF NOT EXISTS soloq_tracking (date TIMESTAMP PRIMARY KEY, TOP_RANK TEXT, JNG_RANK TEXT, MID_RANK TEXT, ADC_RANK TEXT, SUP_RANK TEXT)")
 date_now = datetime.datetime.now()
