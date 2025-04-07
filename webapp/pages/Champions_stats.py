@@ -54,6 +54,20 @@ else :
     duo_winrate = json_scrim.calculate_duo_winrate(team_filtered_games,roles=selected_roles)
     st.dataframe(duo_winrate, use_container_width=True,hide_index=True)
 
+
+#Winrate ennemies champs
+st.write("Enemies winrate")
+enemies_columns = st.columns(5)
+enemies_filtered_games = json_scrim.filter_data_on_team(data_scrim_matches, team_dict=default_team_dict,enemies=True)
+enemies_winrate_table = json_scrim.table_winrate_champs(enemies_filtered_games)
+role_title = ["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"]
+for role in range (0,5):
+    with enemies_columns[role]:
+        st.subheader(role_title[role])
+        st.dataframe(enemies_winrate_table[role], use_container_width=True)
+
+
+
 # %%
 footer()
 

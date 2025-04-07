@@ -45,7 +45,7 @@ drafts_df = draft_analyze.filter_drafts(drafts_df,"SCL",bans_filter)
 figure_bansv2= draft_analyze.count_champs_bansv2(drafts_df,chart=True)
 
 ## DataFrame
-st.dataframe(drafts_df)
+# st.dataframe(drafts_df)
 
-st.dataframe(merged_data)
+# st.dataframe(merged_data)
 footer()

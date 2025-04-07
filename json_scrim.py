@@ -77,20 +77,25 @@ def read_and_create_dataframe(collection) -> pd.DataFrame :
 
 
 # %%
-def filter_data_on_team(data : pd.DataFrame,team_dict : dict) -> pd.DataFrame :
+def filter_data_on_team(data : pd.DataFrame,team_dict : dict, enemies : bool = False) -> pd.DataFrame :
     """Filter data based on a team PUUID dictionnary
 
     Args:
         data (pd.DataFrame): Input data
         team_dict (dict): Dictionnary containing PUUID. Example = {"TOP" : ["9df5d86"], "JUNGLE" : ...}
+        enemies (bool): If you want to negate the filter to retrieve enemies data (Default : False)
 
     Returns:
         pd.DataFrame: The filtered DataFrame
     """
-    return data.loc[data['PUUID'].apply(lambda puuid: any(puuid in sublist for sublist in team_dict.values()))]
+    if enemies : 
+        return data.loc[~data['PUUID'].apply(lambda puuid: any(puuid in sublist for sublist in team_dict.values()))]
+    else :
+        return data.loc[data['PUUID'].apply(lambda puuid: any(puuid in sublist for sublist in team_dict.values()))]
 
-
-
+# import streamlit as st
+# print(data_scrim_matches.shape)
+# print(filter_data_on_team(data_scrim_matches,team_dict=st.secrets["TEAM_SCRIM_ID"],enemies=False).iloc[5]['RIOT_ID_GAME_NAME'])
 
 
 # %%
