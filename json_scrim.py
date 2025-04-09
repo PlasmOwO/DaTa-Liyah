@@ -261,10 +261,12 @@ def calculate_matchup_winrate(data: pd.DataFrame, team_dict: dict, role: str, en
     ).reset_index()
 
     # Winrate
-    matchup_stats['WINRATE'] = (matchup_stats['WINS'] / matchup_stats['GAMES']) * 100
-
+    matchup_stats['Winrate (%)'] = (matchup_stats['WINS'] / matchup_stats['GAMES']) * 100
+    matchup_stats.rename({"SKIN": "ALLY_CHAMPION"},axis=1,inplace=True)
     # Sort ny number of games played
     matchup_stats = matchup_stats.sort_values(by='GAMES', ascending=False)
+    matchup_stats = matchup_stats.style.background_gradient(subset=['Winrate (%)'], cmap='RdYlGn', vmin=0, vmax=100)
+
     # display(matchup_stats) 
 
     return matchup_stats
