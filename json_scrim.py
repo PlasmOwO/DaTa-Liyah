@@ -265,11 +265,11 @@ def calculate_matchup_winrate(data: pd.DataFrame, team_dict: dict, role: str, en
     matchup_stats.rename({"SKIN": "ALLY_CHAMPION"},axis=1,inplace=True)
     # Sort ny number of games played
     matchup_stats = matchup_stats.sort_values(by='GAMES', ascending=False)
-    matchup_stats = matchup_stats.style.background_gradient(subset=['Winrate (%)'], cmap='RdYlGn', vmin=0, vmax=100)
+    matchup_stats_style = matchup_stats.style.background_gradient(subset=['Winrate (%)'], cmap='RdYlGn', vmin=0, vmax=100)
 
     # display(matchup_stats) 
 
-    return matchup_stats
+    return matchup_stats , matchup_stats_style
 
 
 
@@ -309,3 +309,5 @@ def calculate_duo_winrate(filtered_data: pd.DataFrame, roles: tuple = ("MIDDLE",
     duo_stats = duo_stats.sort_values(by='GAMES', ascending=False)
     duo_stats = duo_stats.style.background_gradient(subset=['Winrate (%)'], cmap='RdYlGn', vmin=0, vmax=100)
     return duo_stats
+
+# def get_unique_ally_champions_by_role(data : pd.DataFrame , ):

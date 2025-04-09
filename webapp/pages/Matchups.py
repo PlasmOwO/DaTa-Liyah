@@ -27,7 +27,19 @@ data_scrim_matches = json_scrim.read_and_create_dataframe(scrim_matches)
 st.subheader("Matchups par role")
 roles = ["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"]
 role_filter = st.segmented_control("Role filter",options=roles,default="TOP", selection_mode="single")
-st.dataframe(json_scrim.calculate_matchup_winrate(data_scrim_matches,default_team_dict,role=role_filter), hide_index=True)
+matchup_table, matchup_style = json_scrim.calculate_matchup_winrate(data_scrim_matches,default_team_dict,role=role_filter)
+st.dataframe(matchup_style, hide_index=True)
+
+#Detail d'un matchup
+st.subheader("Matchup details")
+print(np.sort(matchup_table["ALLY_CHAMPION"].unique()))
+ally_champ = st.selectbox("Champion",options = np.sort(matchup_table["ALLY_CHAMPION"].unique()),index=None, placeholder="Select a champion")
+possible_enemies_champs = np.sort(matchup_table[matchup_table["ALLY_CHAMPION"]==ally_champ]["ENEMY_CHAMPION"].unique())
+disable_enemy = True
+if ally_champ != None :
+    disable_enemy = False
+enemy_champ = st.selectbox("Enemy champion",options = possible_enemies_champs,index=None, placeholder="Select a champion",disabled=disable_enemy)
+
 
 #Footer
 footer()
