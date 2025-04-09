@@ -113,36 +113,91 @@ def get_winrate_by_side(data : pd.DataFrame, chart = False) :
     return {"blue" : float(winrate_blue) , "red" : float(winrate_red)}
 
 
-def get_winrate_by_side_every_two_weeks(data : pd.DataFrame, chart = False) :
-    """Retrieve and groupby champion from the dataFrame and get number of game and number of win (+winrate) every two weeks."""
-    # retrive date_time regexpour clear numero de game tranformen format bien puis boucler dessus
-    data['formatted_date'] = data['jsonFileName'].apply(lambda x: datetime.strptime(x.split("_")[0], "%d%m%Y").strftime("%d-%m-%Y"))
-    data['week_of_the_year'] = data['formatted_date'].apply(lambda x: datetime.strptime(x, "%d-%m-%Y").isocalendar()[1])
+# def get_winrate_by_side_every_two_weeks(data : pd.DataFrame, chart = False) :
+#     """Retrieve and groupby champion from the dataFrame and get number of game and number of win (+winrate) every two weeks."""
+#     # retrive date_time regexpour clear numero de game tranformen format bien puis boucler dessus
+#     data['formatted_date'] = data['jsonFileName'].apply(lambda x: datetime.strptime(x.split("_")[0], "%d%m%Y").strftime("%d-%m-%Y"))
+#     data['week_of_the_year'] = data['formatted_date'].apply(lambda x: datetime.strptime(x, "%d-%m-%Y").isocalendar()[1])
 
-    data['paired_week'] = data['week_of_the_year'].apply(lambda x: x + 1 if x % 2 != 0 else x)
-    print("Semaines disponibles dans data :", data['week_of_the_year'].unique())
+#     data['paired_week'] = data['week_of_the_year'].apply(lambda x: x + 1 if x % 2 != 0 else x)
+#     print("Semaines disponibles dans data :", data['week_of_the_year'].unique())
+#     winrate_blue = (
+#         data.loc[(data['WIN'] == 'Win') & (data['TEAM'] == '100')]
+#         .groupby('paired_week')['WIN'].count() /
+#         data.loc[data['TEAM'] == '100'].groupby('paired_week')['WIN'].count() * 100
+#     ).rename("Blue")
+
+#     winrate_red = (
+#         data.loc[(data['WIN'] == 'Win') & (data['TEAM'] == '200')]
+#         .groupby('paired_week')['WIN'].count() /
+#         data.loc[data['TEAM'] == '200'].groupby('paired_week')['WIN'].count() * 100
+#     ).rename("Red")
+#     df_winrate = pd.concat([winrate_blue, winrate_red], axis=1).reset_index()
+#     df_winrate.rename(columns={"paired_week": "Week"}, inplace=True)
+    
+#     if chart:
+#         fig = plty.line(
+#             df_winrate.melt(id_vars=["Week"], var_name="Side", value_name="Winrate (%)"),
+#             x="Week", y="Winrate (%)", color="Side",
+#             title="Winrate Evolution (Merging Odd Weeks into Even Weeks)"
+#         )
+#         fig.update_layout(yaxis_range=[0,100])
+#         return fig
+#     return df_winrate
+def get_winrate_by_side_every_two_weeks(data: pd.DataFrame, chart=False, mode="week"):
+    """
+    Calcule le winrate des deux sides toutes les deux semaines OU par mois.
+    
+    Parameters:
+        - data : pd.DataFrame contenant les colonnes jsonFileName, WIN, TEAM
+        - chart : booléen, pour afficher un graphique
+        - mode : "week" (par défaut) ou "month" pour changer le type d'agrégation
+    """
+
+    # Format de date
+    data['formatted_date'] = data['jsonFileName'].apply(lambda x: datetime.strptime(x.split("_")[0], "%d%m%Y"))
+    data['week_of_the_year'] = data['formatted_date'].dt.isocalendar().week
+    data['month'] = data['formatted_date'].dt.month
+
+    if mode == "week":
+        data['period'] = data['week_of_the_year'].apply(lambda x: x + 1 if x % 2 != 0 else x)
+        title = "Winrate Every Two Weeks (Blue vs Red)"
+        x_label = "Week"
+    elif mode == "month":
+        data['period'] = data['month']
+        title = "Winrate per Month (Blue vs Red)"
+        x_label = "Month"
+    else:
+        raise ValueError("Mode must be either 'week' or 'month'.")
+
+    # Calcul du winrate pour chaque side
     winrate_blue = (
         data.loc[(data['WIN'] == 'Win') & (data['TEAM'] == '100')]
-        .groupby('paired_week')['WIN'].count() /
-        data.loc[data['TEAM'] == '100'].groupby('paired_week')['WIN'].count() * 100
+        .groupby('period')['WIN'].count() /
+        data.loc[data['TEAM'] == '100'].groupby('period')['WIN'].count() * 100
     ).rename("Blue")
 
     winrate_red = (
         data.loc[(data['WIN'] == 'Win') & (data['TEAM'] == '200')]
-        .groupby('paired_week')['WIN'].count() /
-        data.loc[data['TEAM'] == '200'].groupby('paired_week')['WIN'].count() * 100
+        .groupby('period')['WIN'].count() /
+        data.loc[data['TEAM'] == '200'].groupby('period')['WIN'].count() * 100
     ).rename("Red")
+
     df_winrate = pd.concat([winrate_blue, winrate_red], axis=1).reset_index()
-    df_winrate.rename(columns={"paired_week": "Week"}, inplace=True)
-    
+    df_winrate.rename(columns={"period": x_label}, inplace=True)
+
     if chart:
-        fig = plty.bar(
-            df_winrate.melt(id_vars=["Week"], var_name="Side", value_name="Winrate (%)"),
-            x="Week", y="Winrate (%)", color="Side",
-            title="Winrate Evolution (Merging Odd Weeks into Even Weeks)", barmode="group"
+        fig = plty.line(
+            df_winrate.melt(id_vars=[x_label], var_name="Side", value_name="Winrate (%)"),
+            x=x_label, y="Winrate (%)", color="Side",
+            title=title
         )
-        fig.show()
+        fig.update_layout(yaxis_range=[0, 100])
+        return fig
+
     return df_winrate
+
+    
 
     
     # data['formatted_date'] = data['jsonFileName'].apply(lambda x: datetime.strptime(x.split("_")[0], "%d%m%Y").strftime("%d-%m-%Y"))

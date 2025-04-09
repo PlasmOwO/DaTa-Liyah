@@ -67,7 +67,10 @@ elif st.session_state['authentication_status']:
     st.title("Dashboard League of Legends")
 
     # winrate_by_side = json_scrim.get_winrate_by_side(team_games, False)
-    winrate_by_side = json_scrim.get_winrate_by_side_every_two_weeks(team_games, False)
+    # winrate_by_side = json_scrim.get_winrate_by_side_every_two_weeks(team_games, chart=True, mode='month')
+    winrate_by_side = json_scrim.get_winrate_by_side_every_two_weeks(team_games, chart=True)
+
+    st.plotly_chart(winrate_by_side, use_container_width=True)
     st.write(winrate_by_side)
     # st.write("Winrate by side:")
     # # print(winrate_by_side)
