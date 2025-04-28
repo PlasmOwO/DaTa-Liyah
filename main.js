@@ -1,3 +1,5 @@
+//Run this script with the following command: node main.js --python_path=your_python_path
+
 const { ROFLReader } = require('rofl-parser.js');
 const { spawn } = require("child_process");
 const fs = require('fs');
@@ -51,11 +53,24 @@ function getPatch(roflPath) {
     }
 }
 
+function isOfficialMatch(filename){
+    // Vérifie si c'est un match officiel
+    // Retourne N pour la Nieme etape (1 pour la GA, 2 pour la deuxieme etape etc...)
+    const GA_regex = /^(1904|2004)/;
+    if (GA_regex.test(filename)) {
+        return 1;
+    }
+
+    return 0;
+}
+
 // Fonction pour mettre à jour les noms de clés
 function updateJsonKeys(metadata, filename, patch) {
     // Ajouter le nom du fichier et le patch dans les métadonnées
     metadata.jsonFileName = filename;
     if (patch) metadata.patchVersion = patch;
+    
+    metadata.officialMatch = isOfficialMatch(filename);
 
     // Changer le nom des clés
     if (metadata.hasOwnProperty('gameLength')) {
@@ -114,7 +129,7 @@ filenames.forEach((file) => {
 
 console.log(`Les métadonnées ont été converties et sauvegardées dans : ${targetFolderJson}`);
 
-const pythonProcess = spawn("python", ["push_json_to_db.py", ...args], {
+const pythonProcess = spawn("C:/Users/Utilisateur/python_envs/lol_webapp/Scripts/python.exe", ["push_json_to_db.py", ...args], {
     stdio: "inherit", // Affiche la sortie du script Python dans la console  
     env: process.env
 });
