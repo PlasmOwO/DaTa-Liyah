@@ -97,6 +97,19 @@ def filter_data_on_team(data : pd.DataFrame,team_dict : dict, enemies : bool = F
 # print(data_scrim_matches.shape)
 # print(filter_data_on_team(data_scrim_matches,team_dict=st.secrets["TEAM_SCRIM_ID"],enemies=False).iloc[5]['RIOT_ID_GAME_NAME'])
 
+def filter_data_official_matches(data : pd.DataFrame, list_etape : list = []) ->pd.DataFrame :
+    """Filter data on the selected official matches (list of nexus tour steps)
+
+    Args:
+        data (pd.DataFrame): Input data
+        list_etape (list): A list containing the official match steps (for example : [1,2,3,...])
+
+    Returns:
+        pd.DataFrame: The filtered Data
+    """
+    if list_etape == [] :
+        return data
+    return data.loc[data['officialMatch'].isin(list_etape)]
 
 # %%
 def get_winrate_by_side(data : pd.DataFrame, chart = False) :
