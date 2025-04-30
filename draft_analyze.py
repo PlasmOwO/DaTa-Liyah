@@ -165,6 +165,8 @@ def count_champs_bansv2(data : pd.DataFrame, chart : bool = False) :
                         champion = "MonkeyKing"
                     elif champion =="RenataGlasc":
                         champion = "Renata"
+                    elif champion == "Dr.Mundo":
+                        champion = "Drmundo"
 
                     blue_proportion = champions_bans_df['Blue'].iloc[champion_index] / champions_bans_df['total'].iloc[champion_index]
                     red_proportion = champions_bans_df['Red'].iloc[champion_index] / champions_bans_df['total'].iloc[champion_index]
