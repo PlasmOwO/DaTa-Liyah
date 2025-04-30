@@ -32,16 +32,17 @@ data_scrim_matches = json_scrim.read_and_create_dataframe(scrim_matches)
 #app config
 st.set_page_config(layout="wide")
 
-#Filter official sidebar
+#Filter official matches sidebar
 with st.sidebar :
     st.write("Filter official matches")
-    official_filter = st.multiselect("Choose filter",options=[1,2,3,4,5,6],default=[],key="official_match")
+    official_filter = st.multiselect("Choose filter",options=[0,1,2,3,4,5,6],default=[],key="official_match")
     data_scrim_matches = json_scrim.filter_data_official_matches(data_scrim_matches, official_filter)
 
 #Filter data
 team_filtered_games = json_scrim.filter_data_on_team(data_scrim_matches, team_dict=default_team_dict)
 
 #Winrate table
+st.header("Number of games : " + str(len(team_filtered_games['_id'].unique())))
 columns = st.columns(5)
 
 default_winrate_table = json_scrim.table_winrate_champs(team_filtered_games)

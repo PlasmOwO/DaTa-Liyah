@@ -102,7 +102,7 @@ def filter_data_official_matches(data : pd.DataFrame, list_etape : list = []) ->
 
     Args:
         data (pd.DataFrame): Input data
-        list_etape (list): A list containing the official match steps (for example : [1,2,3,...])
+        list_etape (list): A list containing the official match steps (for example : [0,1,2,3,...])
 
     Returns:
         pd.DataFrame: The filtered Data
