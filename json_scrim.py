@@ -128,7 +128,8 @@ def get_winrate_by_side(data : pd.DataFrame, chart = False) :
 
     if chart : 
         fig = plty.bar(x=['Blue','Red'], y=[winrate_blue,winrate_red], labels={"x" : "Side", "y" : "Winrate (%)"})
-        fig.show()
+        fig.update_traces(marker_color=['blue', 'red'])
+        return fig
     return {"blue" : float(winrate_blue) , "red" : float(winrate_red)}
 
 
