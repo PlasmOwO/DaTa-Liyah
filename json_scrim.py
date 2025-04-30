@@ -243,7 +243,8 @@ def get_nb_pink_bought(data : pd.DataFrame, chart=False) -> list :
     
     if chart :
         fig = plty.bar(x=positions, y=top_to_bot_pink_median, labels={"x" : "Positions", "y" : "Median nb of pink"})
-        fig.show()
+        fig.update_traces(marker_color='#f2214a',marker_line_color='black', marker_line_width=1.5)
+        return fig
     return top_to_bot_pink_median
 
 
