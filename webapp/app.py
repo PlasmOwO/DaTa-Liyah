@@ -65,11 +65,16 @@ elif st.session_state['authentication_status']:
     team_dico = st.secrets["TEAM_SCRIM_ID"]
     team_games = json_scrim.filter_data_on_team(data_scrim_matches, team_dict=team_dico)
 
-    st.title("Dashboard League of Legends")
+    # Winrate by side group by week
+    st.header("Winrate by side through time")
+    winrate_by_side_time = json_scrim.get_winrate_by_side_every_two_weeks(team_games, True)
+    st.plotly_chart(winrate_by_side_time,use_container_width=True)
 
-    # Winrate by side
-    winrate_by_side = json_scrim.get_winrate_by_side_every_two_weeks(team_games, True)
-    st.plotly_chart(winrate_by_side,use_container_width=True)
+    # Winrate by side bar
+    st.header("Winrate by side")
+
+    winrate_by_side = json_scrim.get_winrate_by_side(team_games, True)
+    st.plotly_chart(winrate_by_side, use_container_width=True)
 
 
 

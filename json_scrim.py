@@ -16,6 +16,7 @@
 from pymongo import MongoClient
 import pandas as pd
 import plotly.express as plty
+import plotly.graph_objects as go
 import os
 from datetime import datetime
 from dotenv import load_dotenv
@@ -102,7 +103,7 @@ def filter_data_official_matches(data : pd.DataFrame, list_etape : list = []) ->
 
     Args:
         data (pd.DataFrame): Input data
-        list_etape (list): A list containing the official match steps (for example : [1,2,3,...])
+        list_etape (list): A list containing the official match steps (for example : [0,1,2,3,...])
 
     Returns:
         pd.DataFrame: The filtered Data
@@ -127,12 +128,21 @@ def get_winrate_by_side(data : pd.DataFrame, chart = False) :
 
     if chart : 
         fig = plty.bar(x=['Blue','Red'], y=[winrate_blue,winrate_red], labels={"x" : "Side", "y" : "Winrate (%)"})
-        fig.show()
+        fig.update_traces(marker_color=['blue', 'red'])
+        return fig
     return {"blue" : float(winrate_blue) , "red" : float(winrate_red)}
 
 
 def get_winrate_by_side_every_two_weeks(data : pd.DataFrame, chart = False) :
-    """Retrieve and groupby champion from the dataFrame and get number of game and number of win (+winrate) every two weeks."""
+    """Function to have the winrate by side every to weeks. Teh chart also containg global winrate.
+
+    Args:
+        data (pd.DataFrame): The filtered dataframe from team's data
+        chart (bool, optional): Chose to display chart or not. Defaults to False.
+
+    Returns:
+        A pandas DataFrame or a plolty chart.
+    """
     # retrive date_time regexpour clear numero de game tranformen format bien puis boucler dessus
     data = data.copy()
     data['formatted_date'] = data['jsonFileName'].apply(lambda x: datetime.strptime(x.split("_")[0], "%d%m%Y").strftime("%d-%m-%Y"))
@@ -151,17 +161,30 @@ def get_winrate_by_side_every_two_weeks(data : pd.DataFrame, chart = False) :
         .groupby('paired_week')['WIN'].count() /
         data.loc[data['TEAM'] == '200'].groupby('paired_week')['WIN'].count() * 100
     ).rename("Red")
+
+    winrate_global = (
+        data.loc[(data['WIN'] == 'Win')]
+        .groupby('paired_week')['WIN'].count() /
+        data.groupby('paired_week')['WIN'].count() * 100
+    )
     df_winrate = pd.concat([winrate_blue, winrate_red], axis=1).reset_index()
     df_winrate.rename(columns={"paired_week": "Week"}, inplace=True)
-    
+    df_winrate_long = df_winrate.melt(id_vars=["Week"], var_name="Side", value_name="Winrate (%)").fillna(0)
+
     if chart:
-        fig = plty.line(
-            df_winrate.melt(id_vars=["Week"], var_name="Side", value_name="Winrate (%)"),
-            x="Week", y="Winrate (%)", color="Side",
-            color_discrete_sequence=plty.colors.qualitative.G10,
-            title="Tendance de la forme de l'équipe."
-        )
-        fig.update_layout(yaxis_range=[0,100])
+        color_discrete_map = {"Blue" : "blue", "Red" : "red"}
+        fig = go.Figure()
+        for side, color in color_discrete_map.items():
+            fig.add_trace(go.Scatter(
+                x=df_winrate_long[df_winrate_long["Side"] == side]["Week"],
+                y=df_winrate_long[df_winrate_long["Side"] == side]["Winrate (%)"],
+                mode="lines",
+                name=side,
+                line=dict(color=color)
+            ))
+        fig.update_layout(yaxis_range=[0, 100])
+        fig.add_trace(go.Scatter(x=winrate_global.index,y=winrate_global.values,mode="lines",name="Global",line=dict(color="purple")))
+
         return fig
     return df_winrate
 
@@ -221,7 +244,8 @@ def get_nb_pink_bought(data : pd.DataFrame, chart=False) -> list :
     
     if chart :
         fig = plty.bar(x=positions, y=top_to_bot_pink_median, labels={"x" : "Positions", "y" : "Median nb of pink"})
-        fig.show()
+        fig.update_traces(marker_color='#f2214a',marker_line_color='black', marker_line_width=1.5)
+        return fig
     return top_to_bot_pink_median
 
 

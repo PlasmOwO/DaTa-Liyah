@@ -13,12 +13,15 @@ def link(link, text, **style):
 
 
 def layout(*args):
+    # Detect Streamlit theme
+    theme_background_color = st.get_option("theme.backgroundColor")
+    theme_text_color = st.get_option("theme.textColor")
 
-    style = """
+    style = f"""
     <style>
-      # MainMenu {visibility: hidden;}
-      footer {visibility: hidden;}
-     .stApp { bottom: 105px; }
+      # MainMenu {{visibility: hidden;}}
+      footer {{visibility: hidden;}}
+      .stApp {{ bottom: 105px; }}
     </style>
     """
 
@@ -28,7 +31,7 @@ def layout(*args):
         bottom=0,
         margin=px(0, 0, 0, 0),
         width=percent(100),
-        color="black",
+        color=theme_text_color,  # Use theme's text color
         text_align="center",
         height="auto",
         opacity=1
