@@ -20,11 +20,22 @@ You have mostly 3 things to configure :
 * [Setup secrets and credentials](#Streamlit-secrets-and-credentials) for the streamlit webapp application
 
 ### MongoDB
-[MongoDB](https://www.mongodb.com/)
-TODO
+Section to help you configuring a MongoDB hosted database.  
+Do not hesitate to follow MongoDB [documentation](https://www.mongodb.com/docs/) if you need help.  
+* Create a MongoDB account and go to Atlas --> ([Link to MongoDB](https://www.mongodb.com/))
+* Create a free AWS cluster
+* Create a new database (By default the name of the database in the code is : `lol_match_database`)
+* Create 2 collections inside (By default : `drafts` and `scrim_matches`)
+
+After this i recommend you to go to the *Security* section of Atlas and to configure the *Database Access* and the *Network Access*.
+The goal here is to give access to the database to a limited number of users / or addresses. If you want to whitelist all IP adressess (but cannot access without the right role), add `0.0.0.0/0` to *Network Access*.
+
+> **My personal suggestion**  
+> Create at least 3 users. One who is the admin of the database. A read-only user, that will perform request from the application. And a read-&-write user. Use it if someone else wants to add data in a collection.
 
 ### SQLite Cloud
 TODO
+
 ### Streamlit secrets and credentials
 TODO
 
