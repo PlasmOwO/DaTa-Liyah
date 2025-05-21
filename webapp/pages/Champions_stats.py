@@ -34,10 +34,23 @@ st.set_page_config(layout="wide")
 
 #Filter official matches sidebar
 with st.sidebar :
+    ## Filter official matches
     st.write("Filter official matches")
     official_filter = st.multiselect("Choose filter",options=[0,1,2,3,4,5,6],default=[],key="official_match")
     data_scrim_matches = json_scrim.filter_data_official_matches(data_scrim_matches, official_filter)
-
+    ## Filter on  jungler
+    jungler_swap = st.toggle("Swap Jungler", value=False)
+    if jungler_swap:
+        st.write("🟢 Jungler changé en **New Jungler**")
+        jungler_filter = ["New Jungler"]
+    else :
+        st.write("⚪️ Jungler par défaut **Old Jungler**")
+        jungler_filter = ["Old Jungler"]
+    data_scrim_matches = json_scrim.get_jungler_puuid(
+        data_scrim_matches,
+        jungler_filter,
+        team_dict=default_team_dict
+    )
 #Filter data
 team_filtered_games = json_scrim.filter_data_on_team(data_scrim_matches, team_dict=default_team_dict)
 

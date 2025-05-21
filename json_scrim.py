@@ -20,6 +20,7 @@ import plotly.graph_objects as go
 import os
 from datetime import datetime
 from dotenv import load_dotenv
+import streamlit as st
 load_dotenv()
 
 
@@ -249,7 +250,44 @@ def get_nb_pink_bought(data : pd.DataFrame, chart=False) -> list :
     return top_to_bot_pink_median
 
 
-# %%
+def get_jungler_puuid(data : pd.DataFrame, jungler_filter : None, team_dict = None):
+    """Get the jungler puuid from the data
+
+    Args:
+        data (pd.DataFrame): The filtered DataFrame
+        jungler_filter (list): List of jungler puuid to keep
+        team_dict (dict): Dictionnary containing PUUID
+    Returns:
+        list: List of jungler puuid
+    """
+    if not jungler_filter or not team_dict:
+        return data
+    # try:
+    #     old_jungler_puuids = st.secrets["TEAM_SCRIM_ID"]["JUNGLE"]
+    #     new_jungler_puuids = st.secrets["TEAM_SCRIM_ID"]["JUNGLE_2"]
+    # except Exception:
+    #     old_jungler_puuids = []
+    #     new_jungler_puuids = []
+    puuids = []
+    if "Old Jungler" in jungler_filter:
+        puuids += st.secrets["TEAM_SCRIM_ID"]["JUNGLE"]
+    if "New Jungler" in jungler_filter:
+        puuids += st.secrets["TEAM_SCRIM_ID"]["JUNGLE_2"]
+
+    team_puuids = []
+    for v in team_dict.values():
+        team_puuids += v
+
+    def keep_row(row):
+        if row["TRUE_POSITION"] != "JUNGLE": # If player is not jungler, return True
+            return True
+        if row["PUUID"] not in team_puuids: # If Puuid is not in team, return True (enemy)
+            return True  
+        return row["PUUID"] in puuids # If jungle is ally, return PUUID
+
+    mask = data.apply(keep_row, axis=1)
+    return data[mask]
+
 # get_nb_pink_bought(scl, chart=True)
 
 
