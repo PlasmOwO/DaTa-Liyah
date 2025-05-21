@@ -16,8 +16,8 @@ The first thing to do is to fork this code in a **public, open-source** repo (Se
 ## ⚙️ Configuration 
 You have mostly 3 things to configure :
 * [Deploy your personnal MongoDB database](#MongoDB) to store scrims, drafts and more
-* [Deploy your personnal SQLite Cloud database](#SQLite Cloud) to track Soloq progress of your players (Usage with Riot personnal API Key --> see [Riot Developer Portal](https://developer.riotgames.com/app-type)
-* [Setup secrets and credentials](#Streamlit secrets and credentials) for the streamlit webapp application
+* [Deploy your personnal SQLite Cloud database](#SQLite-Cloud) to track Soloq progress of your players (Usage with Riot personnal API Key --> see [Riot Developer Portal](https://developer.riotgames.com/app-type)
+* [Setup secrets and credentials](#Streamlit-secrets-and-credentials) for the streamlit webapp application
 
 ### MongoDB
 [MongoDB](https://www.mongodb.com/)
