@@ -60,6 +60,14 @@ function isOfficialMatch(filename){
     if (GA_regex.test(filename)) {
         return 1;
     }
+    const NT_2_regex = /^(1005|1105|1705|1805)/;
+    if (NT_2_regex.test(filename)) {
+        return 2;
+    }
+    const NT_3_regex = /^(0706|0806|1406|1506)/;
+    if (NT_3_regex.test(filename)) {
+        return 3;
+    }
 
     return 0;
 }
@@ -129,7 +137,7 @@ filenames.forEach((file) => {
 
 console.log(`Les métadonnées ont été converties et sauvegardées dans : ${targetFolderJson}`);
 
-const pythonProcess = spawn("python", ["push_json_to_db.py", ...args], {
+const pythonProcess = spawn("C:/Users/Utilisateur/python_envs/lol_webapp/Scripts/python.exe", ["push_json_to_db.py", ...args], {
     stdio: "inherit", // Affiche la sortie du script Python dans la console  
     env: process.env
 });
