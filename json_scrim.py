@@ -21,6 +21,7 @@ import os
 from datetime import datetime
 from dotenv import load_dotenv
 import streamlit as st
+import warnings
 load_dotenv()
 
 
@@ -90,10 +91,14 @@ def filter_data_on_team(data : pd.DataFrame,team_dict : dict, enemies : bool = F
     Returns:
         pd.DataFrame: The filtered DataFrame
     """
-    if enemies : 
-        return data.loc[~data['PUUID'].apply(lambda puuid: any(puuid in sublist for sublist in team_dict.values()))]
-    else :
-        return data.loc[data['PUUID'].apply(lambda puuid: any(puuid in sublist for sublist in team_dict.values()))]
+    try :
+        if enemies : 
+            return data.loc[~data['PUUID'].apply(lambda puuid: any(puuid in sublist for sublist in team_dict.values()))]
+        else :
+            return data.loc[data['PUUID'].apply(lambda puuid: any(puuid in sublist for sublist in team_dict.values()))]
+    except KeyError :
+        warnings.warn("Filter_data_on_team : KeyError, maybe caused by filtering on empty data")
+        return pd.DataFrame(columns=data.columns)
 
 # import streamlit as st
 # print(data_scrim_matches.shape)
@@ -112,6 +117,13 @@ def filter_data_official_matches(data : pd.DataFrame, list_etape : list = []) ->
     if list_etape == [] :
         return data
     return data.loc[data['officialMatch'].isin(list_etape)]
+
+def filter_data_date(data : pd.DataFrame, start_date : datetime.date , end_date : datetime.date) -> pd.DataFrame :
+
+    time_filtered_df = data.loc[(start_date <= data["datetime"].dt.date) & (data["datetime"].dt.date<= end_date)]
+    if time_filtered_df.empty :
+        time_filtered_df = pd.DataFrame(columns=data.columns)
+    return time_filtered_df
 
 # %%
 def get_winrate_by_side(data : pd.DataFrame, chart = False) :
@@ -250,24 +262,23 @@ def get_nb_pink_bought(data : pd.DataFrame, chart=False) -> list :
     return top_to_bot_pink_median
 
 
-def get_jungler_puuid(data : pd.DataFrame, jungler_filter : None, team_dict = None):
-    """Get the jungler puuid from the data
+def get_jungler_puuid(data: pd.DataFrame, jungler_filter: list = None, team_dict: dict = None) -> pd.DataFrame:
+    """Get the jungler PUUID from the data.
 
     Args:
-        data (pd.DataFrame): The filtered DataFrame
-        jungler_filter (list): List of jungler puuid to keep
-        team_dict (dict): Dictionnary containing PUUID
+        data (pd.DataFrame): The filtered DataFrame.
+        jungler_filter (list): List of jungler PUUIDs to keep.
+        team_dict (dict): Dictionary containing PUUIDs.
+
     Returns:
-        list: List of jungler puuid
+        pd.DataFrame: Filtered DataFrame with original column names if empty.
     """
+    if data.empty:
+        return pd.DataFrame(columns=data.columns)
+
     if not jungler_filter or not team_dict:
         return data
-    # try:
-    #     old_jungler_puuids = st.secrets["TEAM_SCRIM_ID"]["JUNGLE"]
-    #     new_jungler_puuids = st.secrets["TEAM_SCRIM_ID"]["JUNGLE_2"]
-    # except Exception:
-    #     old_jungler_puuids = []
-    #     new_jungler_puuids = []
+
     puuids = []
     if "Old Jungler" in jungler_filter:
         puuids += st.secrets["TEAM_SCRIM_ID"]["JUNGLE"]
@@ -279,14 +290,17 @@ def get_jungler_puuid(data : pd.DataFrame, jungler_filter : None, team_dict = No
         team_puuids += v
 
     def keep_row(row):
-        if row["TRUE_POSITION"] != "JUNGLE": # If player is not jungler, return True
+        if row["TRUE_POSITION"] != "JUNGLE":  # If player is not jungler, return True
             return True
-        if row["PUUID"] not in team_puuids: # If Puuid is not in team, return True (enemy)
-            return True  
-        return row["PUUID"] in puuids # If jungle is ally, return PUUID
+        if row["PUUID"] not in team_puuids:  # If PUUID is not in team, return True (enemy)
+            return True
+        return row["PUUID"] in puuids  # If jungler is ally, return PUUID
 
     mask = data.apply(keep_row, axis=1)
-    return data[mask]
+    filtered_data = data[mask]
+
+    # Ensure column names are preserved if the result is empty
+    return filtered_data if not filtered_data.empty else pd.DataFrame(columns=data.columns)
 
 # get_nb_pink_bought(scl, chart=True)
 

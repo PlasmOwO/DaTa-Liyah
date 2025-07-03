@@ -5,6 +5,7 @@ from footer import footer
 import os
 import sys
 from dotenv import load_dotenv
+import datetime
 
 import streamlit as st
 
@@ -38,6 +39,18 @@ with st.sidebar :
     st.write("Filter official matches")
     official_filter = st.multiselect("Choose filter",options=[0,1,2,3,4,5,6],default=[],key="official_match")
     data_scrim_matches = json_scrim.filter_data_official_matches(data_scrim_matches, official_filter)
+    
+    ## Filter on date
+    st.write("Date filter")
+    date_filter = st.date_input(
+        "Select your date filter",
+        [],
+        None,
+        "today",
+        format="DD.MM.YYYY"
+    )
+    data_scrim_matches = (json_scrim.filter_data_date(data_scrim_matches, date_filter[0], date_filter[1])     if len(date_filter) == 2 else data_scrim_matches)
+
     ## Filter on  jungler
     jungler_swap = st.toggle("Swap Jungler", value=False)
     if jungler_swap:
