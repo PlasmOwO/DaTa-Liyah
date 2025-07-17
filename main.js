@@ -68,6 +68,10 @@ function isOfficialMatch(filename){
     if (NT_3_regex.test(filename)) {
         return 3;
     }
+    const NT_4_regex = /^(1207|1307|1907|2007)/;
+    if (NT_4_regex.test(filename)) {
+        return 4;
+    }
 
     return 0;
 }
