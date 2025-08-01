@@ -34,15 +34,13 @@ if (!fs.existsSync(targetFolderJson)) {
 // Fonction pour extraire le patch (format attendu : 15.0.1 ou 15.1)
 function getPatch(roflPath) {
     try {
-        // Lecture des premiers 300 octets du fichier (plage plus large pour trouver le patch)
         const buffer = fs.readFileSync(roflPath);
         const hexString = buffer.toString('hex');
         const utf8String = Buffer.from(hexString, 'hex').toString('ascii').replace(/\0/g, '');
 
-        // Recherche de la version du patch (e.g., "15.0.1" ou "15.1")
         const matches = utf8String.match(/\d{1,2}\.\d{1,2}(\.\d{1,2})?/);
         if (matches && matches.length > 0) {
-            return matches[0]; // Retourne le premier match trouvé
+            return matches[0]; 
         } else {
             console.error(`Aucun patch trouvé pour le fichier : ${roflPath}`);
             return null;
