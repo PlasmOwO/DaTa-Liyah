@@ -70,6 +70,10 @@ function isOfficialMatch(filename){
     if (NT_4_regex.test(filename)) {
         return 4;
     }
+    const NT_5_regex = /^(0208|0308|0908|1008)/;
+    if (NT_5_regex.test(filename)) {
+        return 5;
+    }
 
     return 0;
 }
