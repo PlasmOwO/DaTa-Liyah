@@ -74,6 +74,10 @@ function isOfficialMatch(filename){
     if (NT_5_regex.test(filename)) {
         return 5;
     }
+    const NT_6_regex = /^(3008|3108|0609|0709)/;
+    if (NT_6_regex.test(filename)) {
+        return 6;
+    }
 
     return 0;
 }
