@@ -22,6 +22,8 @@ from datetime import datetime
 from dotenv import load_dotenv
 import streamlit as st
 import warnings
+from bson import ObjectId
+import numpy as np
 load_dotenv()
 
 
@@ -260,6 +262,36 @@ def get_nb_pink_bought(data : pd.DataFrame, chart=False) -> list :
         fig.update_traces(marker_color='#f2214a',marker_line_color='black', marker_line_width=1.5)
         return fig
     return top_to_bot_pink_median
+
+
+def get_gold_percent(data : pd.DataFrame) -> pd.DataFrame:
+    """Create a dataframe with the percentage of gold by player. Use this function with filtered data on a specific team.
+    Drop NAN values to the returned dataframe.
+
+    Args:
+        data (pd.DataFrame): The filtered dataframe
+
+    Returns:
+        pd.DataFrame: DataFrame with :
+            * Rows = Unique game ID
+            * Columns = %gold per role and if the game is won or not
+    """
+    true_position_list = ['TOP', 'JUNGLE', 'MIDDLE', 'BOTTOM', 'UTILITY']
+    unique_game_id = data["_id"].unique()
+    res_df = pd.DataFrame(columns=['TOP', 'JUNGLE', 'MIDDLE', 'BOTTOM', 'UTILITY','WIN'],index=unique_game_id)
+    for match_id in unique_game_id :
+        res_df.loc[ObjectId(match_id), "WIN"] = data.loc[data["_id"] == ObjectId(match_id), "WIN"].values[0]
+        for position_role in true_position_list:
+            gold_value = data.loc[(data["_id"] == ObjectId(match_id)) & (data["TRUE_POSITION"] == position_role), "GOLD_EARNED"].values
+            if gold_value.size <= 0 :
+                res_df.loc[ObjectId(match_id), position_role] = np.nan
+            else :
+                res_df.loc[ObjectId(match_id),position_role] = int(gold_value[0])
+                
+    res_df["SUM_GOLD"] = res_df.drop("WIN",axis=1).sum(axis=1)
+    for position_role in true_position_list:
+        res_df[position_role] = res_df[position_role] / res_df["SUM_GOLD"]
+    return res_df.dropna(axis=0)
 
 
 def get_jungler_puuid(data: pd.DataFrame, jungler_filter: list = None, team_dict: dict = None) -> pd.DataFrame:
