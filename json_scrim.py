@@ -17,6 +17,7 @@ from pymongo import MongoClient
 import pandas as pd
 import plotly.express as plty
 import plotly.graph_objects as go
+import plotly.subplots
 import os
 from datetime import datetime
 from dotenv import load_dotenv
@@ -182,23 +183,30 @@ def get_winrate_by_side_every_two_weeks(data : pd.DataFrame, chart = False) :
         .groupby('paired_week')['WIN'].count() /
         data.groupby('paired_week')['WIN'].count() * 100
     )
+
+    count_game = data.drop_duplicates(subset="_id",keep="last").groupby(['paired_week'])['WIN'].count()
+
     df_winrate = pd.concat([winrate_blue, winrate_red], axis=1).reset_index()
     df_winrate.rename(columns={"paired_week": "Week"}, inplace=True)
     df_winrate_long = df_winrate.melt(id_vars=["Week"], var_name="Side", value_name="Winrate (%)").fillna(0)
 
     if chart:
         color_discrete_map = {"Blue" : "blue", "Red" : "red"}
-        fig = go.Figure()
+        fig = plotly.subplots.make_subplots(specs=[[{"secondary_y": True}]])
         for side, color in color_discrete_map.items():
             fig.add_trace(go.Scatter(
                 x=df_winrate_long[df_winrate_long["Side"] == side]["Week"],
                 y=df_winrate_long[df_winrate_long["Side"] == side]["Winrate (%)"],
                 mode="lines",
                 name=side,
-                line=dict(color=color)
+                line=dict(color=color),
+                zorder=2
             ))
         fig.update_layout(yaxis_range=[0, 100])
-        fig.add_trace(go.Scatter(x=winrate_global.index,y=winrate_global.values,mode="lines",name="Global",line=dict(color="purple")))
+        fig.add_trace(go.Scatter(x=winrate_global.index,y=winrate_global.values,mode="lines",name="Global",line=dict(color="purple"),zorder=2))
+        fig.add_trace(go.Bar(x=count_game.index, y=count_game.values, name="Number of games", marker_color='rgb(122, 115, 113)',opacity=0.6, zorder=1),secondary_y=True)
+        fig.update_yaxes(title_text='Winrate by side (%)')
+        fig.update_yaxes(title_text='Number of games', secondary_y=True)
 
         return fig
     return df_winrate
