@@ -30,11 +30,23 @@ Do not hesitate to follow MongoDB [documentation](https://www.mongodb.com/docs/)
 After this i recommend you to go to the *Security* section of Atlas and to configure the *Database Access* and the *Network Access*.
 The goal here is to give access to the database to a limited number of users / or addresses. If you want to whitelist all IP adressess (but cannot access without the right role), add `0.0.0.0/0` to *Network Access*.
 
-> **My personal suggestion**  
+> [!TIP]
 > Create at least 3 users. One who is the admin of the database. A read-only user, that will perform request from the application. And a read-&-write user. Use it if someone else wants to add data in a collection.
 
 ### SQLite Cloud
-TODO
+Section to help you configuring SqliteCloud hosted database.
+Go to the main page of SqliteCloud and create an account : [Sqlite Cloud](https://www.sqlite.ai/)
+> Name seems to be SqliteAI actually, but we will focus on deploying the Sqlite database, so let's keep the old name.
+
+* Create a new project and a new database inside.
+* Chose to either drag and drop a local database to the cloud or to create it from scratch.
+* You must create 6 columns named [date,TOP_RANK,JNG_RANK,MID_RANK,ADC_RANK,SUP_RANK]
+* The date column is *__numeric__* and others are *__text__*
+
+After this i recommend you to go to the *Settings* section of Sqlite Cloud and go to *Users* and create many users needed with the rights permissions.
+
+> [!TIP]
+> Create at least 3 users. One who is the admin of the database. A read-only user, that will perform request from the application. And a read-&-write user. Use it if someone else wants to add data in a collection.
 
 ### Streamlit secrets and credentials
 TODO
