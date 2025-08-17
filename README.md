@@ -55,14 +55,49 @@ TODO
 
 ### Streamlit secrets and credentials
 
-You should have a .env file like this : 
+> [!IMPORTANT]
+> Be sure to never commit any configuration or secret file.
+
+You should have a .env file located at the root of the repo like this : 
 ```env
-GOOGLE_CREDENTIALS_PATH = "PATH_JSON_GOOGLE_SERVICE_ACCOUNT.json" #CHANGEME
-API_KEY = "RGAPI-XXX-XXX-XXX" #CHANGEME
-SOLOQ_DB_
+GOOGLE_CREDENTIALS_PATH = "PATH_JSON_GOOGLE_SERVICE_ACCOUNT.json" #CHANGEME, path of your json file containing logs for the google service account
+API_KEY = "RGAPI-XXX-XXX-XXX" #CHANGEME, riotgame api key
+SOLOQ_DB_RW_CONNECTION_STRING = "sqlitecloud://XXXXXXX" #CHANGEME, connection string to sqlitecloud database
 ```
 
+and a file inside `.streamlit/secrets.toml` like this :
+```toml
+[credentials]
+usernames = {XXX = {password = "HASHED_PASSWORD",name = "XXX", email = "XXX@XXX"}} #CHANGEME
+
+[cookie]
+expiry_days = X #CHANGEME
+key = "XXX"
+name = "XXX"
+
+[API_KEY]
+API_KEY = "RGAPI-XXX-XXX-XXX" #CHANGEME, riotgame api key
+
+[SOLOQ_DB]
+RO_connection_string = "sqlitecloud://XXX" #CHANGEME
+
+[MONGO_DB]
+RO_connection_string = "mongodb+XXX" #CHANGEME
+
+[TEAM_SCRIM_ID]
+TOP = ["XXX","XXX"] #CHANGEME, list of puuid of the player, the one you will find in json from rofl files
+JUNGLE = []
+MIDDLE = []
+BOTTOM = []
+UTILITY = []
+```
+
+You should copy the entire `secrets.toml` file inside the hosted app.  
 ![{E2AEE949-74FD-414B-A525-4D23C7D76C25}](https://github.com/user-attachments/assets/12fcac20-3e0d-4332-9f61-9fa784599d82)
+
+> [!NOTE]
+> Having a local `.streamlit/secrets.toml` is only for local / testing developpement or having a backup of what is in the hosted app.
+> I recommend you to have it, just in case.
 
 
 ## NPM modules from Gzordrai
