@@ -15,9 +15,10 @@ The first thing to do is to fork this code in a **public, open-source** repo (Se
 
 ## ⚙️ Configuration 
 You have mostly 3 things to configure :
-* [Deploy your personnal MongoDB database](#MongoDB) to store scrims, drafts and more
+* [Deploy your personnal MongoDB database](#MongoDB) to store scrims, drafts and more.
 * [Deploy your personnal SQLite Cloud database](#SQLite-Cloud) to track Soloq progress of your players (Usage with Riot personnal API Key --> see [Riot Developer Portal](https://developer.riotgames.com/app-type)
-* [Setup secrets and credentials](#Streamlit-secrets-and-credentials) for the streamlit webapp application
+* [Create a Google service account](#Google-sheet-draft-history) to keep all the Drafts links used for web scraping.
+* [Setup secrets and credentials](#Streamlit-secrets-and-credentials) for the streamlit webapp application and database stuff.
 
 ### MongoDB
 Section to help you configuring a MongoDB hosted database.  
@@ -38,7 +39,7 @@ Section to help you configuring SqliteCloud hosted database.
 Go to the main page of SqliteCloud and create an account : [Sqlite Cloud](https://www.sqlite.ai/)
 > Name seems to be SqliteAI actually, but we will focus on deploying the Sqlite database, so let's keep the old name.
 
-* Create a new project and a new database inside.
+* Create a new project and a new database inside. (By default : `soloq_tracking.db`)
 * Chose to either drag and drop a local database to the cloud or to create it from scratch.
 * You must create 6 columns named [date,TOP_RANK,JNG_RANK,MID_RANK,ADC_RANK,SUP_RANK]
 * The date column is *__numeric__* and others are *__text__*
@@ -48,8 +49,18 @@ After this i recommend you to go to the *Settings* section of Sqlite Cloud and g
 > [!TIP]
 > Create at least 3 users. One who is the admin of the database. A read-only user, that will perform request from the application. And a read-&-write user. Use it if someone else wants to add data in a collection.
 
-### Streamlit secrets and credentials
+### Google sheet draft history
 TODO
+
+
+### Streamlit secrets and credentials
+
+You should have a .env file like this : 
+```env
+GOOGLE_CREDENTIALS_PATH = "PATH_JSON_GOOGLE_SERVICE_ACCOUNT.json" #CHANGEME
+API_KEY = "RGAPI-XXX-XXX-XXX" #CHANGEME
+SOLOQ_DB_
+```
 
 ![{E2AEE949-74FD-414B-A525-4D23C7D76C25}](https://github.com/user-attachments/assets/12fcac20-3e0d-4332-9f61-9fa784599d82)
 
