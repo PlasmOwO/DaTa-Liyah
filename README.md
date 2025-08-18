@@ -107,6 +107,11 @@ You should copy the entire `secrets.toml` file inside the hosted app.
 > Having a local `.streamlit/secrets.toml` is only for local / testing developpement or having a backup of what is in the hosted app.
 > I recommend you to have it, just in case.
 
+## :computer: Usefull scripts when developing the pattern
+`pip install -r requirements.txt`
+You will also need to install [nodeJS](https://nodejs.org/en/download) and install with npm : `npm install rofl-parser.js`
 
-## NPM modules from Gzordrai
-npm install rofl-parser.js
+With that done you are able to :
+* Run script to transfrom ROFL file into JSON `node main.js`
+* Run Python scraping to store data of *drafts* into MongoBD `python draft_scraping.py`
+* And run the webapp locally : `streamlit run webapp/app.py`
