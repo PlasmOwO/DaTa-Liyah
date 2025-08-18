@@ -50,7 +50,14 @@ After this i recommend you to go to the *Settings* section of Sqlite Cloud and g
 > Create at least 3 users. One who is the admin of the database. A read-only user, that will perform request from the application. And a read-&-write user. Use it if someone else wants to add data in a collection.
 
 ### Google sheet draft history
-TODO
+My team chose to use Google Sheet to store history and feedback about training and official matches. It's an ergonomic decision to keep this document and add *drafts* links.  
+Theses links will serve to do web scraping, catching all the information from a *draft*.  
+To allow a script to do requests on a Google Sheet, you should use a service account. (See GCP doc on [service account](https://cloud.google.com/iam/docs/service-account-overview?authuser=1&hl=fr)).  
+You will need to store the credentials of this account in a JSON file, keep it in root directory of this repo.  
+Change the .env configuration file (see [credentials](#Streamlit-secrets-and-credentials)).  
+If you need to change the action made by the script using this service account (mainly looking for the rights cells in the sheet), all of the actions are made [here](https://github.com/PlasmOwO/DaTa-Liyah/blob/main/draft_scraping.py)
+
+
 
 
 ### Streamlit secrets and credentials
@@ -60,6 +67,7 @@ TODO
 
 You should have a .env file located at the root of the repo like this : 
 ```env
+SPREADSHEET_KEY = "KEY OF YOU GOOGLE SHEET" #CHANGEME
 GOOGLE_CREDENTIALS_PATH = "PATH_JSON_GOOGLE_SERVICE_ACCOUNT.json" #CHANGEME, path of your json file containing logs for the google service account
 API_KEY = "RGAPI-XXX-XXX-XXX" #CHANGEME, riotgame api key
 SOLOQ_DB_RW_CONNECTION_STRING = "sqlitecloud://XXXXXXX" #CHANGEME, connection string to sqlitecloud database
