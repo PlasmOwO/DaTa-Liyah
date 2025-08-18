@@ -1,3 +1,4 @@
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
 # 🪨📊 DaTa-Liyah
 DaTa-Liyah is an open-source tool to help League of Legends professionnal team to reach all the potential of data to help performance and decision making for the staff !📈
 
@@ -123,3 +124,5 @@ With that done you are able to :
 * Run script to transfrom ROFL file into JSON `node main.js`
 * Run Python scraping to store data of *drafts* into MongoBD `python draft_scraping.py`
 * And run the webapp locally : `streamlit run webapp/app.py`
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
