@@ -4,6 +4,14 @@ DaTa-Liyah is an open-source tool to help League of Legends professionnal team t
 Scripts and functions to export scrims and official matchs of League of Legends to JSON file containing data. And use tools to analyse its.  
 It use the repo [Rofl-parser](https://github.com/Boris-s-store/rofl-parser.js?tab=readme-ov-file) from [gzordrai](https://github.com/gzordrai) to parse ROFL files.
 
+
+## 🌱About data
+DaTa-Liyah does not come with any data. Bring your own and all the analysis will be done automatically.  
+DaTa-Liyah usually uses 3 types of data :
+* Games data from ROFL file
+* Draft data collected via web scraping from external websites (https://draftlol.dawe.gg/)
+* And Soloq data from [Riot games API](https://developer.riotgames.com/)
+
 ## 🤔 How to use ?
 The first thing to do is to fork this code in a **public, open-source** repo (See [License](LICENSE))
 * Go to --> [Streamlit community cloud](https://streamlit.io/cloud)
