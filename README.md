@@ -67,7 +67,7 @@ If you need to change the action made by the script using this service account (
 
 You should have a .env file located at the root of the repo like this : 
 ```env
-SPREADSHEET_KEY = "KEY OF YOU GOOGLE SHEET" #CHANGEME
+SPREADSHEET_KEY = "KEY OF YOUR GOOGLE SHEET" #CHANGEME
 GOOGLE_CREDENTIALS_PATH = "PATH_JSON_GOOGLE_SERVICE_ACCOUNT.json" #CHANGEME, path of your json file containing logs for the google service account
 API_KEY = "RGAPI-XXX-XXX-XXX" #CHANGEME, riotgame api key
 SOLOQ_DB_RW_CONNECTION_STRING = "sqlitecloud://XXXXXXX" #CHANGEME, connection string to sqlitecloud database
