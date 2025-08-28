@@ -13,7 +13,9 @@ htbuilder
 scikit-image
 sqlitecloud
 matplotlib
+
 scikit-learn
+imblearn 
 
 psycopg2
 supabase
