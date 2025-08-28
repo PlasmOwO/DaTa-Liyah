@@ -13,3 +13,11 @@ htbuilder
 scikit-image
 sqlitecloud
 matplotlib
+
+psycopg2
+supabase
+
+fastapi[standard]
+uvicorn
+python-multipart
+
