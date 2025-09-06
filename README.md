@@ -125,4 +125,12 @@ With that done you are able to :
 * Run Python scraping to store data of *drafts* into MongoBD `python draft_scraping.py`
 * And run the webapp locally : `streamlit run webapp/app.py`
 
+## Machine Learning models
+
+Machine learning models are available in the branch [dev-api](https://github.com/PlasmOwO/DaTa-Liyah/tree/dev-api). 
+You can use the [API]() to ask an answer from the model. The API is auto deployed using [Render](https://render.com/)
+The performance of the model is also auto updated using [Github Action](.github/workflows/update_perf_plot.yml)
+
+![performance_plot](img/model_performance.png)
+
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
