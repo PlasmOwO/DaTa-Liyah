@@ -34,6 +34,6 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add ./scripts/perf_plot.png
+          git add ./img/model_performance.png
           git commit -m "chore: update perf plot [skip ci]" || echo "No changes to commit"
           git push origin main
