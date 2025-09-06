@@ -3,7 +3,7 @@ name: Update Model Performance Plot
 on:
   push:
     branches:
-      - dev-api
+      - dev-api   # lance sur push sur dev-api
 
 jobs:
   update-plot:
@@ -13,7 +13,8 @@ jobs:
       - name: Checkout repo (branch main)
         uses: actions/checkout@v3
         with:
-          ref: main 
+          fetch-depth: 0
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -23,11 +24,10 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install sqlitecloud sqlite3 matplotlib seaborn plotly
+          pip install sqlitecloud matplotlib seaborn plotly pandas
 
       - name: Generate performance plot
-        run: |
-          python scripts/generate_perf_plot.py
+        run: python scripts/generate_perf_plot.py
 
       - name: Commit and push updated plot
         run: |
