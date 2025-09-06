@@ -31,5 +31,5 @@ plt.ylabel("F1 Score")
 plt.tight_layout()
 
 # Sauvegarde du graphe
-plt.savefig("model_performance.png")
+plt.savefig("./img/model_performance.png")
 plt.close()
