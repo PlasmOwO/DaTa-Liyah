@@ -8,7 +8,7 @@ import sqlitecloud
 load_dotenv()
 
 API_KEY = os.getenv("API_KEY")
-DB_CONNECTION_STRING = os.getenv("SOLOQ_DB_ADMIN_CONNECTION_STRING")
+DB_CONNECTION_STRING = os.getenv("SOLOQ_DB_RW_CONNECTION_STRING")
 tiers = {
     'IRON': 0,
     'BRONZE': 400,
