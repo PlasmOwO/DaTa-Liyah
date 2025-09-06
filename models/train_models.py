@@ -13,6 +13,11 @@ from imblearn.over_sampling import SMOTE
 from sklearn.metrics import f1_score
 import pickle
 import sys
+import datetime
+import sqlite3
+from git import Repo
+import sqlitecloud
+
 load_dotenv()
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import json_scrim
@@ -116,6 +121,44 @@ def get_gold_diff(data : pd.DataFrame, team_dico ) -> pd.DataFrame :
 
     return res_df.dropna(axis=0)
 
+
+def adapt_datetime(val):
+    """Convert datetime.datetime object to ISO 8601 string."""
+    return val.isoformat()
+
+def convert_datetime(val):
+    """Convert ISO 8601 string to datetime.datetime object."""
+    return datetime.datetime.fromisoformat(val.decode())
+
+
+def get_last_commit_id() -> str:
+    repo = Repo("../")
+    return repo.head.commit.hexsha
+
+def create_add_perf_model_db(score : float) -> None :
+    """Store the performance of the model in a local sqlite database
+
+    Args:
+        score (float): The F1 score of the model
+        commit_id (str): The last commit ID
+    """
+
+
+    # Open the connection to SQLite Cloud
+    con = sqlitecloud.connect(os.getenv("RO_PERF_MODEL"))
+    commit_id = get_last_commit_id()
+    sqlitecloud.register_adapter(datetime.datetime, adapt_datetime)
+    sqlitecloud.register_converter("datetime", convert_datetime)
+    cursor = con.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS model_perf (date TIMESTAMP PRIMARY KEY, COMMIT_ID TEXT, F1_SCORE REAL)")
+    date_now = datetime.datetime.now()
+    cursor.execute("INSERT INTO model_perf (date, COMMIT_ID, F1_SCORE) VALUES (?,?,?)",(date_now,commit_id,score))
+    con.commit()
+    con.close()
+
+
+#---------------
+
 gold_diff_df= get_gold_diff(data_scrim_matches,team_dico=team_dico)
 gold_df = get_gold_percent(team_games)
 enemies_gold = get_gold_percent(enemies_games)
@@ -147,6 +190,9 @@ print("Decision tree on ratio, Score on test set:", test_f1)
 pickle.dump(pipeline,open("decision_tree_ratio.pickle","wb"))
 
 
+create_add_perf_model_db(test_f1)
+
+
 ##Avec PCA
 pipeline = Pipeline([
     ("pca", PCA(n_components=4)),
@@ -159,3 +205,5 @@ y_pred_test = pipeline.predict(x_test)
 test_f1 = f1_score(y_test, y_pred_test, pos_label=1)
 print("pca_log_reg F1, Score on test set:", test_f1)
 pickle.dump(pipeline, open("pca_log_reg.pickle", "wb"))
+
+
