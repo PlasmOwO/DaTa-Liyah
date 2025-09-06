@@ -124,5 +124,5 @@ With that done you are able to :
 * Run script to transfrom ROFL file into JSON `node main.js`
 * Run Python scraping to store data of *drafts* into MongoBD `python draft_scraping.py`
 * And run the webapp locally : `streamlit run webapp/app.py`
-
+todo
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
