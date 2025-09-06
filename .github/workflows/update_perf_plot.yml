@@ -2,8 +2,7 @@ name: Update Model Performance Plot
 
 on:
   push:
-    branches:
-      - dev-api   # lance sur push sur dev-api
+    branches: [dev-api]
   workflow_dispatch:
 
 jobs:
