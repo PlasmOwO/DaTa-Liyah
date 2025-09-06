@@ -1,0 +1,38 @@
+name: Update Model Performance Plot
+
+on:
+  push:
+    branches: [dev-api]
+  workflow_dispatch:
+
+jobs:
+  update-plot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo (branch main)
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install sqlitecloud matplotlib seaborn plotly pandas
+
+      - name: Generate performance plot
+        run: python scripts/generate_perf_plot.py
+
+      - name: Commit and push updated plot
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add ./img/model_performance.png
+          git commit -m "chore: update perf plot [skip ci]" || echo "No changes to commit"
+          git push origin main
