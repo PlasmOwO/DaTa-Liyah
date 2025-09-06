@@ -1,7 +1,6 @@
 name: Update Model Performance Plot
 
 on:
-  workflow_dispatch:  
   push:
     branches:
       - dev-api   # à chaque push sur dev-api, on met à jour le graphe sur main
