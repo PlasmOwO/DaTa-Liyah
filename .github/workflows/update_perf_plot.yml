@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - dev-api   # lance sur push sur dev-api
+  workflow_dispatch:
 
 jobs:
   update-plot:
