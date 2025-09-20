@@ -26,4 +26,10 @@ team_filtered_games = json_scrim.filter_data_on_team(data_scrim_matches, team_di
 st.header("Number of pinks bought in game")
 pinks_chart = json_scrim.get_nb_pink_bought(team_filtered_games,chart=True)
 st.plotly_chart(pinks_chart, use_container_width=True)
+
+
+#Kda for the team
+kda_team_chart = json_scrim.compute_kda_team(team_filtered_games,chart=True)
+st.plotly_chart(kda_team_chart,use_container_width=True)
+
 footer()
