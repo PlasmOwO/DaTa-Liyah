@@ -32,4 +32,14 @@ st.plotly_chart(pinks_chart, use_container_width=True)
 kda_team_chart = json_scrim.compute_kda_team(team_filtered_games,chart=True)
 st.plotly_chart(kda_team_chart,use_container_width=True)
 
+
+#Table kda
+columns = st.columns(5)
+
+kda_table = json_scrim.compute_kda_per_champion(team_filtered_games)
+role_title = ["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"]
+for role in range (0,5):
+    with columns[role]:
+        st.subheader(role_title[role])
+        st.dataframe(kda_table[role], use_container_width=True)
 footer()

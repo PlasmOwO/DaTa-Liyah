@@ -488,9 +488,21 @@ def compute_kda_per_champion(filtered_data : pd.DataFrame) -> list :
     data.loc[:, ["CHAMPIONS_KILLED", "NUM_DEATHS", "ASSISTS"]] = data.loc[:, ["CHAMPIONS_KILLED", "NUM_DEATHS", "ASSISTS"]].astype(int)
     data.loc[:,"kda"] = (data["CHAMPIONS_KILLED"] + data["ASSISTS"]) / data["NUM_DEATHS"].replace(0,1)
     
-    list_dataframe_kda = [0]*5
-    for idx,position in enumerate(["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"]):
-        list_dataframe_kda[idx] = data.loc[data["TRUE_POSITION"] == position].pivot_table(index=["SKIN"],columns="TRUE_POSITION",values="kda",aggfunc='mean')[[position]]
-        list_dataframe_kda[idx] = list_dataframe_kda[idx].map(lambda x : round(x,2))
+    list_dataframe_kda = [0] * 5
+    for idx, position in enumerate(["TOP", "JUNGLE", "MIDDLE", "BOTTOM", "UTILITY"]):
+        df = data.loc[data["TRUE_POSITION"] == position].groupby("SKIN").agg(
+            KDA=( "kda", lambda x: round(x.mean(), 2) ),
+            Count=( "kda", "count" )
+        )
+        df.sort_values(by='Count',ascending=False,inplace=True)
+        max_kda = df['KDA'].max()
+        avg_kda = df['KDA'].mean()
+        df["KDA relatif"] = df["KDA"]/avg_kda
+
+        max_kda_relatif = df['KDA relatif'].max()
+        df = df[["Count","KDA","KDA relatif"]]
+        df = df.style.format({'KDA': '{:.2f}', 'KDA relatif': '{:.2f}'}).background_gradient(subset=['KDA'], cmap='RdYlGn', vmin=0, vmax=max_kda).background_gradient(subset=['KDA relatif'], cmap='RdYlGn', vmin=0, vmax=max_kda_relatif)
+        list_dataframe_kda[idx] = df
+
     return list_dataframe_kda
 
