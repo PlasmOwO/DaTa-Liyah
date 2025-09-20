@@ -401,7 +401,7 @@ def calculate_matchup_winrate(data: pd.DataFrame, team_dict: dict, role: str, en
 
 
 
-# %%
+
 def calculate_duo_winrate(filtered_data: pd.DataFrame, roles: tuple = ("MIDDLE", "JUNGLE")) -> pd.DataFrame:
     """
     Calculate winrate for champion duos in specified roles using pre-filtered data.
@@ -439,3 +439,39 @@ def calculate_duo_winrate(filtered_data: pd.DataFrame, roles: tuple = ("MIDDLE",
     return duo_stats
 
 # def get_unique_ally_champions_by_role(data : pd.DataFrame , ):
+
+
+## KDA calcul
+def compute_kda_team(filtered_data : pd.DataFrame, chart : bool =False) -> pd.DataFrame :
+    """Get the KDA for a team for each game
+
+    Args:
+        filtered_data (pd.DataFrame): The input filtered dataframe containing team games data
+        chart (bool, optional): If true, retrun a figure. Defaults to False.
+
+    Returns:
+        pd.DataFrame: The KDA pivot table dataframe
+    """
+    data = filtered_data.copy()
+    data.loc[:, ["CHAMPIONS_KILLED", "NUM_DEATHS", "ASSISTS"]] = data.loc[:, ["CHAMPIONS_KILLED", "NUM_DEATHS", "ASSISTS"]].astype(int)
+    data.loc[:,"kda"] = (data["CHAMPIONS_KILLED"] + data["ASSISTS"]) / data["NUM_DEATHS"].replace(0,1)
+    kda_team = data.pivot_table(index='_id',columns="TRUE_POSITION",values="kda",aggfunc='last')[["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"]]
+    
+    if chart :
+        kda_team_avg = kda_team.mean()
+        kda_team_med = kda_team.median()
+        fig = go.Figure(
+            data=[
+                go.Bar(name='Mean KDA', x=kda_team_avg.index, y=kda_team_avg.values,marker_color="#D5C381"),
+                go.Bar(name='Median KDA', x=kda_team_med.index, y=kda_team_med.values,marker_color="#93D581") 
+            ],
+            layout=go.Layout(
+                title="Average and Median KDA by Position",
+                xaxis_title="Position",
+                yaxis_title="KDA",
+            )
+        )
+        return fig
+    return kda_team
+
+
