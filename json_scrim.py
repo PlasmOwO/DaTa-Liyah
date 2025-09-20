@@ -455,7 +455,7 @@ def compute_kda_team(filtered_data : pd.DataFrame, chart : bool =False) -> pd.Da
     data = filtered_data.copy()
     data.loc[:, ["CHAMPIONS_KILLED", "NUM_DEATHS", "ASSISTS"]] = data.loc[:, ["CHAMPIONS_KILLED", "NUM_DEATHS", "ASSISTS"]].astype(int)
     data.loc[:,"kda"] = (data["CHAMPIONS_KILLED"] + data["ASSISTS"]) / data["NUM_DEATHS"].replace(0,1)
-    kda_team = data.pivot_table(index='_id',columns="TRUE_POSITION",values="kda",aggfunc='last')[["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"]]
+    kda_team = data.pivot_table(index='_id',columns="TRUE_POSITION",values="kda",aggfunc='mean')[["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"]]
     
     if chart :
         kda_team_avg = kda_team.mean()
@@ -474,4 +474,23 @@ def compute_kda_team(filtered_data : pd.DataFrame, chart : bool =False) -> pd.Da
         return fig
     return kda_team
 
+def compute_kda_per_champion(filtered_data : pd.DataFrame) -> list :
+    """Get the KDA for each role each champion
+
+    Args:
+        filtered_data (pd.DataFrame): The input filtered data
+
+    Returns:
+        list: A list containing from TOP to UTILITY the pandas dataframe containing the data
+    """
+
+    data = filtered_data.copy()
+    data.loc[:, ["CHAMPIONS_KILLED", "NUM_DEATHS", "ASSISTS"]] = data.loc[:, ["CHAMPIONS_KILLED", "NUM_DEATHS", "ASSISTS"]].astype(int)
+    data.loc[:,"kda"] = (data["CHAMPIONS_KILLED"] + data["ASSISTS"]) / data["NUM_DEATHS"].replace(0,1)
+    
+    list_dataframe_kda = [0]*5
+    for idx,position in enumerate(["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"]):
+        list_dataframe_kda[idx] = data.loc[data["TRUE_POSITION"] == position].pivot_table(index=["SKIN"],columns="TRUE_POSITION",values="kda",aggfunc='mean')[[position]]
+        list_dataframe_kda[idx] = list_dataframe_kda[idx].map(lambda x : round(x,2))
+    return list_dataframe_kda
 
