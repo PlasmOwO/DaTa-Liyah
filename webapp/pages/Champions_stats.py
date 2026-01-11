@@ -76,7 +76,9 @@ role_title = ["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"]
 for role in range (0,5):
     with columns[role]:
         st.subheader(role_title[role])
-        st.dataframe(default_winrate_table[role], use_container_width=True)
+        st.dataframe(default_winrate_table[role], width="stretch", column_config={
+            "SKIN": st.column_config.ImageColumn("Champion"),
+        })
 
 # %%
 #Winrate duomatch
@@ -98,7 +100,9 @@ role_title = ["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"]
 for role in range (0,5):
     with enemies_columns[role]:
         st.subheader(role_title[role])
-        st.dataframe(enemies_winrate_table[role], use_container_width=True)
+        st.dataframe(enemies_winrate_table[role], width="stretch", column_config={
+            "SKIN": st.column_config.ImageColumn("Champion"),
+        })
 
 
 

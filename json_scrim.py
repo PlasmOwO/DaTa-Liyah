@@ -25,6 +25,7 @@ import streamlit as st
 import warnings
 from bson import ObjectId
 import numpy as np
+import utils
 load_dotenv()
 
 
@@ -237,6 +238,7 @@ def table_winrate_champs(data : pd.DataFrame) :
         df_player = df_player.astype({'Win' : int})
         df_player['Winrate (%)'] = ((df_player['Win'] / df_player['Count']) * 100).round(2)
         df_player.sort_values(by='Count',ascending=False,inplace=True)
+        df_player.index = df_player.index.map(utils.get_champion_image_from_id)
         df_player = df_player.style.format({'Winrate (%)': '{:.2f}'}).background_gradient(subset=['Winrate (%)'], cmap='RdYlGn', vmin=0, vmax=100)
         top_to_bot_champs.append(df_player)   
         #to add conditionnal formatting
