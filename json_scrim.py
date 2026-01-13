@@ -129,6 +129,30 @@ def filter_data_date(data : pd.DataFrame, start_date : datetime.date , end_date 
         time_filtered_df = pd.DataFrame(columns=data.columns)
     return time_filtered_df
 
+
+def get_mean_winrate(data : pd.DataFrame) -> float:
+    """Get mean of winrate on global team data
+
+    Args:
+        data (pd.DataFrame): Filtered team data
+
+    Returns:
+        float: The mean winrate of the team
+    """
+    return data.loc[(data['WIN']=='Win'),"WIN"].count() / len(data) * 100
+
+
+def get_mean_duration(data : pd.DataFrame) -> int :
+    """Get mean duration of games
+
+    Args:
+        data (pd.DataFrame): The filtered dataframe
+
+    Returns:
+        int: The mean duration of the team's games
+    """
+    return int(data["gameDuration"].mean() /60000)
+
 # %%
 def get_winrate_by_side(data : pd.DataFrame, chart = False) :
     """Compute winrate in blue and red side for a dataFrame (usage with team filter)

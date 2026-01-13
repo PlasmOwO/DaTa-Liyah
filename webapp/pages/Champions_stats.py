@@ -67,8 +67,14 @@ with st.sidebar :
 #Filter data
 team_filtered_games = json_scrim.filter_data_on_team(data_scrim_matches, team_dict=default_team_dict)
 
+#KPIs
+games, winrate, duration = st.columns(3)
+games.metric("Number of games", len(team_filtered_games['_id'].unique()), border=True)
+winrate.metric("Winrate (%)", json_scrim.get_mean_winrate(team_filtered_games).round(2), border=True)
+duration.metric("Mean duration (min)",json_scrim.get_mean_duration(team_filtered_games),border=True)
+
+
 #Winrate table
-st.header("Number of games : " + str(len(team_filtered_games['_id'].unique())))
 columns = st.columns(5)
 
 default_winrate_table = json_scrim.table_winrate_champs(team_filtered_games)

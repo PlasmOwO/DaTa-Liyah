@@ -10,3 +10,4 @@ node_modules
 .streamlit
 sqlitecloud.log
 images/
+notebook.ipynb
