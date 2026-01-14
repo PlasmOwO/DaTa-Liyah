@@ -172,6 +172,30 @@ def filter_data_typeGame(data : pd.DataFrame, list_type_game : list) -> pd.DataF
         return data
     return data.loc[data["gameType"].isin(list_type_game)]
 
+def filter_data_team_side(data : pd.DataFrame, team_side : list, team_dict : dict) -> pd.DataFrame :
+    """Filter data on the ally team side.
+
+    Args:
+        data (pd.DataFrame): The input data
+        team_side (list): The side selected example : ["Blue","Red"]
+        team_dict (dict): Dictionnary containing PUUID. Example = {"TOP" : ["9df5d86"], "JUNGLE" : ...}
+
+    Returns:
+        pd.DataFrame: The filtered data
+    """
+    if team_side == [] :
+        return data
+    team_side_mapping = {
+        "Blue" : "100",
+        "Red" : "200"
+    }
+
+    mapped_team_side = [team_side_mapping[side] for side in team_side if side in team_side_mapping]
+    team_data = filter_data_on_team(data,team_dict=team_dict)
+    team_side_data = team_data.loc[team_data["TEAM"].isin(mapped_team_side)]
+
+    return data.loc[data["_id"].isin(team_side_data["_id"].unique())]
+
 def get_mean_winrate(data : pd.DataFrame) -> float:
     """Get mean of winrate on global team data
 

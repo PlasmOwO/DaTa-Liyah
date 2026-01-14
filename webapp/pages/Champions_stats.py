@@ -47,6 +47,10 @@ with st.sidebar :
     typeGame_filter = st.multiselect("Type of game",options=data_scrim_matches["gameType"].unique().tolist(), default=[], key="typeGame_filter")
     data_scrim_matches = json_scrim.filter_data_typeGame(data_scrim_matches, typeGame_filter)
 
+    ## Filter on side
+    side_filter = st.multiselect("Side",options=["Blue","Red"], default=[], key="side_filter")
+    data_scrim_matches = json_scrim.filter_data_team_side(data_scrim_matches, side_filter,team_dict=default_team_dict)
+
     ## Filter on date
     date_filter = st.date_input(
         "Select your date filter",
@@ -83,10 +87,13 @@ with st.sidebar :
 team_filtered_games = json_scrim.filter_data_on_team(data_scrim_matches, team_dict=default_team_dict)
 
 #KPIs
-games, winrate, duration = st.columns(3)
+games, winrate, duration, side_winrate = st.columns(4)
 games.metric("Number of games", len(team_filtered_games['_id'].unique()), border=True)
 winrate.metric("Winrate (%)", json_scrim.get_mean_winrate(team_filtered_games).round(2), border=True)
 duration.metric("Mean duration (min)",json_scrim.get_mean_duration(team_filtered_games),border=True)
+#Side winrate
+winrate_by_side = json_scrim.get_winrate_by_side(team_filtered_games, True)
+# side_winrate.plotly_chart(winrate_by_side, width="stretch",height="content")
 
 
 #Winrate table
