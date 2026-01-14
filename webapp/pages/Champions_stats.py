@@ -35,13 +35,19 @@ st.set_page_config(layout="wide")
 
 #Filter official matches sidebar
 with st.sidebar :
-    ## Filter official matches
-    st.write("Filter official matches")
-    official_filter = st.multiselect("Choose filter",options=[0,1,2,3,4,5,6],default=[],key="official_match")
-    data_scrim_matches = json_scrim.filter_data_official_matches(data_scrim_matches, official_filter)
-    
+    ## Filter data on patch
+    patch_filter = st.multiselect("Patch",options=data_scrim_matches["patchVersion"].unique().tolist(), default=[], key="patch_filter")
+    data_scrim_matches = json_scrim.filter_data_patch(data_scrim_matches, patch_filter)
+
+    ## Filter on enemyTeam
+    enemyTeam_filter = st.multiselect("Enemy Team",options=data_scrim_matches["enemyTeamName"].unique().tolist(), default=[], key="enemyTeam_filter")
+    data_scrim_matches = json_scrim.filter_data_enemy_team(data_scrim_matches, enemyTeam_filter)
+
+    ## Filter on typeGame
+    typeGame_filter = st.multiselect("Type of game",options=data_scrim_matches["gameType"].unique().tolist(), default=[], key="typeGame_filter")
+    data_scrim_matches = json_scrim.filter_data_typeGame(data_scrim_matches, typeGame_filter)
+
     ## Filter on date
-    st.write("Date filter")
     date_filter = st.date_input(
         "Select your date filter",
         [],
@@ -50,9 +56,18 @@ with st.sidebar :
         format="DD.MM.YYYY"
     )
     data_scrim_matches = (json_scrim.filter_data_date(data_scrim_matches, date_filter[0], date_filter[1])     if len(date_filter) == 2 else data_scrim_matches)
+    
+
+
+
+    ## Filter official matches
+    official_filter = st.multiselect("Offical matches",options=[0,1,2,3,4,5,6],default=[],key="official_match",disabled=True)
+    data_scrim_matches = json_scrim.filter_data_official_matches(data_scrim_matches, official_filter)
+    
+    
 
     ## Filter on  jungler
-    jungler_swap = st.toggle("Swap Jungler", value=False)
+    jungler_swap = st.toggle("Swap Jungler", value=False,disabled=True)
     if jungler_swap:
         st.write("🟢 Jungler changé en **New Jungler**")
         jungler_filter = ["New Jungler"]

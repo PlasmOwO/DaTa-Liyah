@@ -129,6 +129,48 @@ def filter_data_date(data : pd.DataFrame, start_date : datetime.date , end_date 
         time_filtered_df = pd.DataFrame(columns=data.columns)
     return time_filtered_df
 
+def filter_data_patch(data : pd.DataFrame, list_patch : list) -> pd.DataFrame :
+    """Filter data on the selected patches
+
+    Args:
+        data (pd.DataFrame): Input data
+        list_patch (list): A list of patch version
+
+    Returns:
+        pd.DataFrame: The filtered data
+    """
+    if list_patch == [] :
+        return data
+    return data.loc[data["patchVersion"].isin(list_patch)]
+
+
+def filter_data_enemy_team(data : pd.DataFrame, list_team_name : list) -> pd.DataFrame :
+    """Filter data on the selected teams opponents (to retrieve only matches against these teams)
+
+    Args:
+        data (pd.DataFrame): Input data
+        list_team_name (list): A list of team names
+
+    Returns:
+        pd.DataFrame: The filtered data
+    """
+    if list_team_name == [] :
+        return data
+    return data.loc[data["enemyTeamName"].isin(list_team_name)]
+
+def filter_data_typeGame(data : pd.DataFrame, list_type_game : list) -> pd.DataFrame :
+    """Filter data on the selected type of game
+
+    Args:
+        data (pd.DataFrame): Input data
+        list_type_game (list): A list of type of games
+
+    Returns:
+        pd.DataFrame: The filtered data
+    """
+    if list_type_game == [] :
+        return data
+    return data.loc[data["gameType"].isin(list_type_game)]
 
 def get_mean_winrate(data : pd.DataFrame) -> float:
     """Get mean of winrate on global team data
