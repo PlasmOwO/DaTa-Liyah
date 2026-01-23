@@ -13,3 +13,4 @@ htbuilder
 scikit-image
 sqlitecloud
 matplotlib
+altair <5
