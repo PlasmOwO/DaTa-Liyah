@@ -7,7 +7,7 @@ python-dotenv
 beautifulsoup4
 streamlit
 selenium
-streamlit-authenticator
+streamlit-authenticator==0.4.2
 gspread
 htbuilder
 scikit-image
