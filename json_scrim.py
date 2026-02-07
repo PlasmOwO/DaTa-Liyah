@@ -72,7 +72,7 @@ def read_and_create_dataframe(collection) -> pd.DataFrame :
     df = df.explode('participants').reset_index(drop=True)
     df_participants = pd.json_normalize(df['participants'])
     df = pd.concat([df.drop(columns='participants'),df_participants],axis = 1)
-    df['VISION_WARDS_BOUGHT_IN_GAME'] = df['VISION_WARDS_BOUGHT_IN_GAME'].astype('int')
+    df['VISION_WARDS_BOUGHT_IN_GAME'] = df['VISION_WARDS_BOUGHT_IN_GAME'].fillna(0).astype('int')
     df['datetime'] = pd.to_datetime(df['jsonFileName'].apply(lambda x : x.split('_')[0]), format='%d%m%Y')
     return df
 
@@ -545,6 +545,7 @@ def compute_kda_team(filtered_data : pd.DataFrame, chart : bool =False) -> pd.Da
         pd.DataFrame: The KDA pivot table dataframe
     """
     data = filtered_data.copy()
+    data = data.dropna(subset=["CHAMPIONS_KILLED", "NUM_DEATHS", "ASSISTS"])
     data.loc[:, ["CHAMPIONS_KILLED", "NUM_DEATHS", "ASSISTS"]] = data.loc[:, ["CHAMPIONS_KILLED", "NUM_DEATHS", "ASSISTS"]].astype(int)
     data.loc[:,"kda"] = (data["CHAMPIONS_KILLED"] + data["ASSISTS"]) / data["NUM_DEATHS"].replace(0,1)
     kda_team = data.pivot_table(index='_id',columns="TRUE_POSITION",values="kda",aggfunc='mean')[["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"]]
@@ -577,6 +578,7 @@ def compute_kda_per_champion(filtered_data : pd.DataFrame) -> list :
     """
 
     data = filtered_data.copy()
+    data = data.dropna(subset=["CHAMPIONS_KILLED", "NUM_DEATHS", "ASSISTS"])
     data.loc[:, ["CHAMPIONS_KILLED", "NUM_DEATHS", "ASSISTS"]] = data.loc[:, ["CHAMPIONS_KILLED", "NUM_DEATHS", "ASSISTS"]].astype(int)
     data.loc[:,"kda"] = (data["CHAMPIONS_KILLED"] + data["ASSISTS"]) / data["NUM_DEATHS"].replace(0,1)
     
