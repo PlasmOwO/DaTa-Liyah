@@ -232,12 +232,15 @@ def get_winrate_by_side(data : pd.DataFrame, chart = False) :
     """
     winrate_blue = data.loc[(data['WIN']=='Win') & (data['TEAM']=='100'),'WIN'].count() / len(data.loc[data['TEAM']=='100']) * 100
     winrate_red = data.loc[(data['WIN']=='Win') & (data['TEAM']=='200'),'WIN'].count() / len(data.loc[data['TEAM']=='200']) * 100
+    winrate_blue = round(float(winrate_blue),2)
+    winrate_red = round(float(winrate_red),2)
 
     if chart : 
-        fig = plty.bar(x=['Blue','Red'], y=[winrate_blue,winrate_red], labels={"x" : "Side", "y" : "Winrate (%)"})
-        fig.update_traces(marker_color=['blue', 'red'])
+        fig = plty.bar(x=['Blue','Red'], y=[winrate_blue,winrate_red], labels={"x" : "Side", "y" : "Winrate (%)"}, text_auto=True)
+        fig.update_layout(margin=dict(l=5, r=5, t=5, b=5))
+        fig.update_traces(marker_color=['#215FAB', '#AB2821'])
         return fig
-    return {"blue" : float(winrate_blue) , "red" : float(winrate_red)}
+    return {"blue" : winrate_blue , "red" : winrate_red}
 
 
 def get_winrate_by_side_every_two_weeks(data : pd.DataFrame, chart = False) :

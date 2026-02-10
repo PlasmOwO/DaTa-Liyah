@@ -87,13 +87,14 @@ with st.sidebar :
 team_filtered_games = json_scrim.filter_data_on_team(data_scrim_matches, team_dict=default_team_dict)
 
 #KPIs
-games, winrate, duration, side_winrate = st.columns(4)
-games.metric("Number of games", len(team_filtered_games['_id'].unique()), border=True)
-winrate.metric("Winrate (%)", json_scrim.get_mean_winrate(team_filtered_games).round(2), border=True)
-duration.metric("Mean duration (min)",json_scrim.get_mean_duration(team_filtered_games),border=True)
+games, winrate, duration, side_winrate = st.columns([0.15,0.15,0.15,0.55])
+games.metric("![sword](https://github.githubassets.com/images/icons/emoji/unicode/2694.png?v8) Number of games", len(team_filtered_games['_id'].unique()), border=True)
+winrate.metric("![crown](https://github.githubassets.com/images/icons/emoji/unicode/1f451.png?v8) Winrate (%)", json_scrim.get_mean_winrate(team_filtered_games).round(2), border=True)
+duration.metric("![time](https://github.githubassets.com/images/icons/emoji/unicode/1f551.png?v8) Mean duration (min)",json_scrim.get_mean_duration(team_filtered_games),border=True)
 #Side winrate
 winrate_by_side = json_scrim.get_winrate_by_side(team_filtered_games, True)
-# side_winrate.plotly_chart(winrate_by_side, width="stretch",height="content")
+side_winrate.plotly_chart(winrate_by_side, height=175,width="content",config={"displayModeBar": False})
+
 
 
 #Winrate table
@@ -116,7 +117,7 @@ if len(selected_roles) <2 :
     st.info("You need to select 2 roles.", icon="ℹ️")
 else :
     duo_winrate = json_scrim.calculate_duo_winrate(team_filtered_games,roles=selected_roles)
-    st.dataframe(duo_winrate, use_container_width=True,hide_index=True)
+    st.dataframe(duo_winrate, width="stretch",height="stretch",hide_index=True)
 
 
 #Winrate ennemies champs
