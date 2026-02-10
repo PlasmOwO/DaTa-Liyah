@@ -101,7 +101,7 @@ side_winrate.plotly_chart(winrate_by_side, height=175,width="content",config={"d
 columns = st.columns(5)
 
 default_winrate_table = json_scrim.table_winrate_champs(team_filtered_games)
-role_title = ["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"]
+role_title = ["TOP","JUNGLE","MIDDLE","BOTTOM","SUPPORT"]
 for role in range (0,5):
     with columns[role]:
         st.subheader(role_title[role])
@@ -112,12 +112,21 @@ for role in range (0,5):
 # %%
 #Winrate duomatch
 st.write("Duo winrate")
-selected_roles = st.multiselect("Select roles", ["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"], default=["BOTTOM","UTILITY"], max_selections=2)
+ROLE_MAP = {
+    "TOP": "TOP",
+    "JUNGLE": "JUNGLE",
+    "MIDDLE": "MIDDLE",
+    "BOTTOM": "BOTTOM",
+    "SUPPORT": "UTILITY", #BACK -> value
+}
+
+selected_roles_display = st.multiselect("Select roles", list(ROLE_MAP.keys()), default=["BOTTOM","SUPPORT"], max_selections=2)
+selected_roles = [ROLE_MAP[r] for r in selected_roles_display]
 if len(selected_roles) <2 :
     st.info("You need to select 2 roles.", icon="ℹ️")
 else :
     duo_winrate = json_scrim.calculate_duo_winrate(team_filtered_games,roles=selected_roles)
-    st.dataframe(duo_winrate, width="stretch",height="stretch",hide_index=True)
+    st.dataframe(duo_winrate, width="stretch",height="stretch",hide_index=True, )
 
 
 #Winrate ennemies champs
@@ -125,7 +134,7 @@ st.write("Enemies winrate")
 enemies_columns = st.columns(5)
 enemies_filtered_games = json_scrim.filter_data_on_team(data_scrim_matches, team_dict=default_team_dict,enemies=True)
 enemies_winrate_table = json_scrim.table_winrate_champs(enemies_filtered_games)
-role_title = ["TOP","JUNGLE","MIDDLE","BOTTOM","UTILITY"]
+role_title = ["TOP","JUNGLE","MIDDLE","BOTTOM","SUPPORT"]
 for role in range (0,5):
     with enemies_columns[role]:
         st.subheader(role_title[role])
