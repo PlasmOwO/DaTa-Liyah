@@ -38,7 +38,10 @@ with st.sidebar :
     data_scrim_matches = json_scrim.filter_data_enemy_team(data_scrim_matches, enemyTeam_filter)
 
     ## Filter on typeGame
-    typeGame_filter = st.multiselect("Type of game",options=data_scrim_matches["gameType"].unique().tolist(), default=[], key="typeGame_filter")
+    game_types = data_scrim_matches["gameType"].unique().tolist()
+    display_mapping = {gt.capitalize(): gt for gt in game_types}
+    typeGame_filter_display = st.multiselect("Type of game",options=list(display_mapping.keys()), default=[], key="typeGame_filter")
+    typeGame_filter = [display_mapping[val] for val in typeGame_filter_display]
     data_scrim_matches = json_scrim.filter_data_typeGame(data_scrim_matches, typeGame_filter)
 
     ## Filter on side
