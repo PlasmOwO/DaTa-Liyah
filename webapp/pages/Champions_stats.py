@@ -6,18 +6,12 @@ import os
 import sys
 from dotenv import load_dotenv
 import datetime
-
+import json_scrim
 import streamlit as st
 
 # Check user connection
-if 'authentication_status' not in st.session_state:
-    st.session_state['authentication_status'] = None
-if st.session_state['authentication_status'] is None or st.session_state['authentication_status'] is False:
-    st.error('Please login to access this page')
-    st.stop()
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-import json_scrim
+
 load_dotenv()
 # %% [markdown]
 # ### Dictionnary of teams
