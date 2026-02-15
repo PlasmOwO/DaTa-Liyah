@@ -123,7 +123,11 @@ if len(selected_roles) <2 :
     st.info("You need to select 2 roles.", icon="ℹ️")
 else :
     duo_winrate = json_scrim.calculate_duo_winrate(team_filtered_games,roles=selected_roles)
-    st.dataframe(duo_winrate, width="stretch",height="stretch",hide_index=True, )
+    st.dataframe(duo_winrate, width="stretch",height="stretch",hide_index=True, column_config={
+        f"{selected_roles[0]}_CHAMPION" : st.column_config.ImageColumn(),
+        f"{selected_roles[1]}_CHAMPION" : st.column_config.ImageColumn(),
+
+    })
 
 
 #Winrate ennemies champs

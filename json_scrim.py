@@ -527,10 +527,12 @@ def calculate_duo_winrate(filtered_data: pd.DataFrame, roles: tuple = ("MIDDLE",
 
     # Calculate the winrate
     duo_stats['Winrate (%)'] = (duo_stats['WINS'] / duo_stats['GAMES']) * 100
-
+    duo_stats[f"{roles[0]}_CHAMPION"] = duo_stats[f"{roles[0]}_CHAMPION"].map(utils.get_champion_image_from_id)
+    duo_stats[f"{roles[1]}_CHAMPION"] = duo_stats[f"{roles[1]}_CHAMPION"].map(utils.get_champion_image_from_id)
     # Sort by the number of games played
     duo_stats = duo_stats.sort_values(by='GAMES', ascending=False)
-    duo_stats = duo_stats.style.background_gradient(subset=['Winrate (%)'], cmap='RdYlGn', vmin=0, vmax=100)
+    duo_stats = duo_stats.style.format({'Winrate (%)': '{:.2f}'}).background_gradient(subset=['Winrate (%)'], cmap='RdYlGn', vmin=0, vmax=100)
+
     return duo_stats
 
 # def get_unique_ally_champions_by_role(data : pd.DataFrame , ):
