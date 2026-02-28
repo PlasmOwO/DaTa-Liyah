@@ -19,7 +19,6 @@ st.set_page_config(layout="wide")
 ## Welcome message
 st.title(f"Welcome to the League of Legends Dashboard")
 
-
 #Import scrim data
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 import json_scrim
@@ -31,6 +30,17 @@ data_scrim_matches = json_scrim.read_and_create_dataframe(scrim_matches)
 
 team_dico = st.secrets["TEAM_SCRIM_ID"]
 team_games = json_scrim.filter_data_on_team(data_scrim_matches, team_dict=team_dico)
+
+print(list(st.secrets["TEAM_DICT_NAME"].keys()))
+# History
+history_columns_order = ["Win","ALLY_TEAM__"] + list(st.secrets["TEAM_DICT_NAME"].keys()) + ["TOTAL_ALLY_KILL","enemy_TOP","enemy_JUNGLE","enemy_MIDDLE","enemy_BOTTOM","enemy_UTILITY","TOTAL_ENEMY_KILL","gameDuration","patchVersion","datetime"]
+st.dataframe(json_scrim.history(data_scrim_matches, dict_name=st.secrets["TEAM_DICT_NAME"],), hide_index=True,  column_order=history_columns_order,column_config={
+    "datetime" : st.column_config.DatetimeColumn(
+        "datetime", format="YYYY-MM-DD"
+    )
+}
+)
+
 
 # Winrate by side group by week
 st.header("Winrate by side through time")

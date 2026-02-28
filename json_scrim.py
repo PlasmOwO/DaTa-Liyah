@@ -605,3 +605,148 @@ def compute_kda_per_champion(filtered_data : pd.DataFrame) -> list :
 
     return list_dataframe_kda
 
+def history(data : pd.DataFrame, dict_name : dict) -> pd.DataFrame :
+    """Create a pandas table, history of scrim games, game will be filtered when we don"t have all data
+
+    Args:
+        data (pd.DataFrame): All data table
+        dict_name (dict): Dict of matching Name player with role Example : {Filou : BOTTOM}
+
+    Returns:
+        pd.DataFrame: History dataframe
+    """
+    
+    def get_enemy_value(row, role):
+        ally_team = int(row["ALLY_TEAM__"])
+        enemy_team = 300 - ally_team
+
+        col_name = f"SKIN_{enemy_team}_{role}"
+
+        return row[col_name] if col_name in row else None
+    
+    def get_enemy_kill(row) :
+        ally_team = int(row["ALLY_TEAM__"])
+        enemy_team = 300 - ally_team       
+        
+        col_name = f"TOTALKILL_TEAM_{enemy_team}__"
+        return row[col_name] if col_name in row else None
+
+    def detect_ally_team(row, ally_dict):
+        puuid_cols = row["PUUID"]
+
+        for team in ["100", "200"]:
+            for position in ally_dict.keys():
+
+                col = (team, position)
+
+                if col not in puuid_cols.index:
+                    continue
+
+                puuid_value = puuid_cols[col]
+
+                if pd.isna(puuid_value):
+                    continue
+
+                if puuid_value in ally_dict[position]:
+                    return int(team)
+
+        return None
+    
+    df_columns = data[["_id","WIN","TEAM","PUUID","TRUE_POSITION","SKIN","CHAMPIONS_KILLED","gameDuration","enemyTeamName","jsonFileName","patchVersion"]].dropna().astype({
+        "CHAMPIONS_KILLED" : int
+    })
+    pivot = df_columns.pivot(
+        index="_id",
+        columns=["TEAM","TRUE_POSITION"],
+        values=["SKIN","PUUID","WIN","CHAMPIONS_KILLED"]
+    )
+
+
+    pivot["TOTALKILL_TEAM_100"] = (
+        pivot["CHAMPIONS_KILLED"]
+        .loc[:, ("100", slice(None))]
+        .sum(axis=1)
+    )
+    pivot["TOTALKILL_TEAM_200"] = (
+        pivot["CHAMPIONS_KILLED"]
+        .loc[:, ("200", slice(None))]
+        .sum(axis=1)
+    )
+    pivot["TEAM_WIN_100"] = (
+        pivot["WIN"]
+        .loc[:, ("100", slice(None))]
+        .bfill(axis=1)
+        .iloc[:, 0]
+    )
+
+    pivot["TEAM_WIN_200"] = (
+        pivot["WIN"]
+        .loc[:, ("200", slice(None))]
+        .bfill(axis=1)
+        .iloc[:, 0]
+    )
+
+    pivot["ALLY_TEAM"] = pivot.apply(
+        detect_ally_team,
+        axis=1,
+        ally_dict=st.secrets["TEAM_SCRIM_ID"]
+    )
+
+    pivot = pivot.drop(["CHAMPIONS_KILLED","WIN"],axis=1)
+    pivot.columns = ["_".join(col) for col in pivot.columns]
+
+
+    merged = pivot.merge(data[["_id","gameDuration","enemyTeamName","datetime","patchVersion"]].drop_duplicates(subset="_id"),on="_id")
+
+    for name,role in dict_name.items() :
+        merged[name] = merged.apply(
+            lambda row: row[f"SKIN_{int(row['ALLY_TEAM__'])}_{role}"],
+            axis=1
+        )
+        merged[f"enemy_{role}"] = merged.apply(
+            lambda row: get_enemy_value(row, role),
+            axis=1
+        )
+        
+    merged = merged.drop(
+        [col for col in merged.columns if col.startswith("SKIN_")],
+        axis=1
+    )
+
+    merged = merged.drop(
+        [col for col in merged.columns if col.startswith("PUUID_")],
+        axis=1
+    )
+
+    merged["Win"] = merged.apply(
+        lambda row : row[f"TEAM_WIN_{int(row['ALLY_TEAM__'])}__"],
+        axis=1
+    )
+
+    merged["gameDuration"] = merged["gameDuration"] / 60000
+
+    merged["TOTAL_ALLY_KILL"] = merged.apply(
+        lambda row : row[f"TOTALKILL_TEAM_{int(row['ALLY_TEAM__'])}__"],
+        axis=1
+    )
+    
+    merged["TOTAL_ENEMY_KILL"] = merged.apply(
+        lambda row: get_enemy_kill(row),
+        axis=1
+    )
+    merged = merged.drop(
+        [col for col in merged.columns if col.startswith("TEAM_WIN_")],
+        axis=1
+    )
+
+    merged["gameDuration"] = pd.to_numeric(
+        merged["gameDuration"],
+        errors="coerce"
+    ).round(0)
+
+    merged["ALLY_TEAM__"] = merged["ALLY_TEAM__"].replace({
+        100 : "Blue",
+        200 : "Red"
+    })
+    return merged.drop(["_id","TOTALKILL_TEAM_100__","TOTALKILL_TEAM_200__"],axis=1).sort_values("datetime",ascending=False)
+
