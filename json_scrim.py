@@ -703,10 +703,13 @@ def history(data : pd.DataFrame, dict_name : dict) -> pd.DataFrame :
             lambda row: row[f"SKIN_{int(row['ALLY_TEAM__'])}_{role}"],
             axis=1
         )
+        merged[name] = merged[name].map(utils.get_champion_image_from_id)
         merged[f"enemy_{role}"] = merged.apply(
             lambda row: get_enemy_value(row, role),
             axis=1
         )
+        merged[f"enemy_{role}"] = merged[f"enemy_{role}"].map(utils.get_champion_image_from_id)
+
         
     merged = merged.drop(
         [col for col in merged.columns if col.startswith("SKIN_")],
@@ -744,9 +747,10 @@ def history(data : pd.DataFrame, dict_name : dict) -> pd.DataFrame :
         errors="coerce"
     ).round(0)
 
-    merged["ALLY_TEAM__"] = merged["ALLY_TEAM__"].replace({
+    merged["Ally side"] = merged["ALLY_TEAM__"].replace({
         100 : "Blue",
         200 : "Red"
     })
+    
     return merged.drop(["_id","TOTALKILL_TEAM_100__","TOTALKILL_TEAM_200__"],axis=1).sort_values("datetime",ascending=False)
 

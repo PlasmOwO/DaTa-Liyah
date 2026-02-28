@@ -31,14 +31,23 @@ data_scrim_matches = json_scrim.read_and_create_dataframe(scrim_matches)
 team_dico = st.secrets["TEAM_SCRIM_ID"]
 team_games = json_scrim.filter_data_on_team(data_scrim_matches, team_dict=team_dico)
 
-print(list(st.secrets["TEAM_DICT_NAME"].keys()))
 # History
-history_columns_order = ["Win","ALLY_TEAM__"] + list(st.secrets["TEAM_DICT_NAME"].keys()) + ["TOTAL_ALLY_KILL","enemy_TOP","enemy_JUNGLE","enemy_MIDDLE","enemy_BOTTOM","enemy_UTILITY","TOTAL_ENEMY_KILL","gameDuration","patchVersion","datetime"]
-st.dataframe(json_scrim.history(data_scrim_matches, dict_name=st.secrets["TEAM_DICT_NAME"],), hide_index=True,  column_order=history_columns_order,column_config={
+history_columns_order = ["Win","Ally side"] + list(st.secrets["TEAM_DICT_NAME"].keys()) + ["TOTAL_ALLY_KILL","enemy_TOP","enemy_JUNGLE","enemy_MIDDLE","enemy_BOTTOM","enemy_UTILITY","TOTAL_ENEMY_KILL","enemyTeamName","gameDuration","patchVersion","datetime"]
+history_columns_config = {
+    **{
+        f"{name}": st.column_config.ImageColumn()
+        for name in st.secrets["TEAM_DICT_NAME"].keys()
+    },
+    **{
+        f"enemy_{role}": st.column_config.ImageColumn()
+        for role in ["TOP", "JUNGLE", "MIDDLE", "BOTTOM", "UTILITY"]
+    },
     "datetime" : st.column_config.DatetimeColumn(
         "datetime", format="YYYY-MM-DD"
-    )
+    ),
 }
+
+st.dataframe(json_scrim.history(data_scrim_matches, dict_name=st.secrets["TEAM_DICT_NAME"],), hide_index=True,  column_order=history_columns_order,column_config=history_columns_config
 )
 
 
