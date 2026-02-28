@@ -23,13 +23,47 @@ st.title(f"Welcome to the League of Legends Dashboard")
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 import json_scrim
 
-
 connect = json_scrim.connect_database('lol_match_database', host=st.secrets["MONGO_DB"]["RO_connection_string"])
 scrim_matches = json_scrim.get_collection(connect, "scrim_matches")
 data_scrim_matches = json_scrim.read_and_create_dataframe(scrim_matches)
 
 team_dico = st.secrets["TEAM_SCRIM_ID"]
 team_games = json_scrim.filter_data_on_team(data_scrim_matches, team_dict=team_dico)
+
+default_team_dict = st.secrets["TEAM_SCRIM_ID"]
+
+#sidebar
+with st.sidebar :
+    ## Filter data on patch
+    patch_filter = st.multiselect("Patch",options=data_scrim_matches["patchVersion"].unique().tolist(), default=[], key="patch_filter")
+    data_scrim_matches = json_scrim.filter_data_patch(data_scrim_matches, patch_filter)
+
+    ## Filter on enemyTeam
+    enemyTeam_filter = st.multiselect("Enemy Team",options=data_scrim_matches["enemyTeamName"].unique().tolist(), default=[], key="enemyTeam_filter")
+    data_scrim_matches = json_scrim.filter_data_enemy_team(data_scrim_matches, enemyTeam_filter)
+
+    ## Filter on typeGame
+    game_types = data_scrim_matches["gameType"].unique().tolist()
+    display_mapping = {gt.capitalize(): gt for gt in game_types}
+    typeGame_filter_display = st.multiselect("Type of game",options=list(display_mapping.keys()), default=[], key="typeGame_filter")
+    typeGame_filter = [display_mapping[val] for val in typeGame_filter_display]
+    data_scrim_matches = json_scrim.filter_data_typeGame(data_scrim_matches, typeGame_filter)
+
+    ## Filter on side
+    side_filter = st.multiselect("Side",options=["Blue","Red"], default=[], key="side_filter")
+    data_scrim_matches = json_scrim.filter_data_team_side(data_scrim_matches, side_filter,team_dict=default_team_dict)
+
+    ## Filter on date
+    date_filter = st.date_input(
+        "Select your date filter",
+        [],
+        None,
+        "today",
+        format="DD.MM.YYYY"
+    )
+    data_scrim_matches = (json_scrim.filter_data_date(data_scrim_matches, date_filter[0], date_filter[1])     if len(date_filter) == 2 else data_scrim_matches)
+    
+
 
 # History
 history_columns_order = ["Win","Ally side"] + list(st.secrets["TEAM_DICT_NAME"].keys()) + ["TOTAL_ALLY_KILL","enemy_TOP","enemy_JUNGLE","enemy_MIDDLE","enemy_BOTTOM","enemy_UTILITY","TOTAL_ENEMY_KILL","enemyTeamName","gameDuration","patchVersion","datetime"]
