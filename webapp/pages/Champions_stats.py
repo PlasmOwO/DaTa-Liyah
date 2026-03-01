@@ -85,9 +85,9 @@ team_filtered_games = json_scrim.filter_data_on_team(data_scrim_matches, team_di
 
 #KPIs
 games, winrate, duration, side_winrate = st.columns([0.15,0.15,0.15,0.55])
-games.metric("![sword](https://github.githubassets.com/images/icons/emoji/unicode/2694.png?v8) Number of games", len(team_filtered_games['_id'].unique()), border=True)
+games.metric("![sword](https://github.githubassets.com/images/icons/emoji/unicode/2694.png?v8) Nombre de parties", len(team_filtered_games['_id'].unique()), border=True)
 winrate.metric("![crown](https://github.githubassets.com/images/icons/emoji/unicode/1f451.png?v8) Winrate (%)", json_scrim.get_mean_winrate(team_filtered_games).round(2), border=True)
-duration.metric("![time](https://github.githubassets.com/images/icons/emoji/unicode/1f551.png?v8) Mean duration (min)",json_scrim.get_mean_duration(team_filtered_games),border=True)
+duration.metric("![time](https://github.githubassets.com/images/icons/emoji/unicode/1f551.png?v8) Durée moyenne (min)",json_scrim.get_mean_duration(team_filtered_games),border=True)
 #Side winrate
 winrate_by_side = json_scrim.get_winrate_by_side(team_filtered_games, True)
 side_winrate.plotly_chart(winrate_by_side, height=175,width="content",config={"displayModeBar": False})
@@ -131,7 +131,7 @@ else :
 
 
 #Winrate ennemies champs
-st.write("Enemies winrate")
+st.write("Winrate adverse")
 enemies_columns = st.columns(5)
 enemies_filtered_games = json_scrim.filter_data_on_team(data_scrim_matches, team_dict=default_team_dict,enemies=True)
 enemies_winrate_table = json_scrim.table_winrate_champs(enemies_filtered_games)

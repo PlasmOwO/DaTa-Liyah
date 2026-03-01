@@ -17,7 +17,7 @@ st.set_page_config(layout="wide")
 
 
 ## Welcome message
-st.title(f"Welcome to the League of Legends Dashboard")
+# st.title(f"Welcome to the League of Legends Dashboard")
 
 #Import scrim data
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
@@ -66,6 +66,7 @@ with st.sidebar :
 
 
 # History
+st.title("Historique des parties")
 history_columns_order = ["Win","Ally side"] + list(st.secrets["TEAM_DICT_NAME"].keys()) + ["TOTAL_ALLY_KILL","enemy_TOP","enemy_JUNGLE","enemy_MIDDLE","enemy_BOTTOM","enemy_UTILITY","TOTAL_ENEMY_KILL","enemyTeamName","gameDuration","patchVersion","datetime"]
 history_columns_config = {
     **{
@@ -86,12 +87,13 @@ st.dataframe(json_scrim.history(data_scrim_matches, dict_name=st.secrets["TEAM_D
 
 
 # Winrate by side group by week
-st.header("Winrate by side through time")
+# st.header("Winrate by side through time")
+st.header("Winrate par side au fil du temps")
 winrate_by_side_time = json_scrim.get_winrate_by_side_every_two_weeks(team_games, True)
 st.plotly_chart(winrate_by_side_time,use_container_width=True)
 
 # Winrate by side bar
-st.header("Winrate by side")
+st.header("Winrate par side")
 
 winrate_by_side = json_scrim.get_winrate_by_side(team_games, True)
 st.plotly_chart(winrate_by_side, use_container_width=True)
